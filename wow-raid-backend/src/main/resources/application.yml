@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+server:
+  port: 8088
+
+jwt:
+  secret: ${JWT_SECRET:wow-raid-secret-key-change-in-production-min-256-bits}
+  expiration-ms: 86400000        # 24h
+  refresh-expiration-ms: 604800000  # 7d
+
+raid-leader:
+  code: ${RAID_LEADER_CODE:raidleader1234}

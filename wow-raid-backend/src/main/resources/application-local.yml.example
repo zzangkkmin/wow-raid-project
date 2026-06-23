@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5690/wow_raid
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop   # 로컬 개발용. 재시작 시 DB 초기화됨
+    show-sql: true
+
+logging:
+  level:
+    com.wowraid: DEBUG
+    org.hibernate.SQL: DEBUG

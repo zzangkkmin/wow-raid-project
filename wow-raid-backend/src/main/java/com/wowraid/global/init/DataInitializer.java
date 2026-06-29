@@ -178,41 +178,41 @@ public class DataInitializer implements ApplicationRunner {
         log.info("[DataInitializer] 캐릭터 생성 완료");
 
         // ─── 레이드 일정 생성 ──────────────────────────────────────
-        // 1) 모집 중 - 노말 (다음 주 토요일)
+        // 1) 모집 중 - 공허첨탑 노말 (다음 주 토요일)
         RaidSchedule openRaidNormal = raidRepository.save(RaidSchedule.builder()
-                .title("[노말] 네루바르 궁전 공격대 모집")
+                .title("[노말] 공허첨탑 공격대 모집")
                 .raidDate(LocalDateTime.now().plusDays(7).withHour(21).withMinute(0).withSecond(0))
                 .difficulty(Difficulty.NORMAL)
                 .maxTanks(2)
                 .maxHealers(3)
                 .maxDps(15)
-                .notes("아이템 레벨 600 이상 / 초보 환영 / 디스코드 필참")
+                .notes("아이템 레벨 246 이상 / 초보 환영 / 디스코드 필참\n보스 순서: 전제군주 아베르지안 → 보라시우스 → 몰락한 왕 살라다르 → 바엘고어&에조라크 → 빛에 눈이 먼 선봉대 → 우주의 왕관")
                 .status(RaidStatus.OPEN)
                 .createdBy(leader)
                 .build());
 
-        // 2) 모집 중 - 영웅 (2주 후 금요일)
+        // 2) 모집 중 - 공허첨탑 영웅 (2주 후 금요일)
         RaidSchedule openRaidHeroic = raidRepository.save(RaidSchedule.builder()
-                .title("[영웅] 네루바르 궁전 영웅 공대 모집")
+                .title("[영웅] 공허첨탑 영웅 공대 모집")
                 .raidDate(LocalDateTime.now().plusDays(13).withHour(20).withMinute(30).withSecond(0))
                 .difficulty(Difficulty.HEROIC)
                 .maxTanks(2)
                 .maxHealers(4)
                 .maxDps(14)
-                .notes("아이템 레벨 636 이상 / 노말 클리어 필수 / 파싱 우선 선발")
+                .notes("아이템 레벨 259 이상 / 노말 클리어 필수 / 파싱 우선 선발\n최종 보스 우주의 왕관(알레리아 윈드러너) 경험자 우대")
                 .status(RaidStatus.OPEN)
                 .createdBy(leader)
                 .build());
 
-        // 3) 마감 - 신화 (지난 주)
+        // 3) 마감 - 쿠엘탈라스 진격로 신화 (지난 주)
         RaidSchedule closedRaid = raidRepository.save(RaidSchedule.builder()
-                .title("[신화] 네루바르 궁전 신화 진행")
+                .title("[신화] 쿠엘탈라스 진격로 신화 진행")
                 .raidDate(LocalDateTime.now().minusDays(7).withHour(21).withMinute(0).withSecond(0))
                 .difficulty(Difficulty.MYTHIC)
                 .maxTanks(2)
                 .maxHealers(4)
                 .maxDps(14)
-                .notes("신화 경험자 필수 / 워크로그 제출 요망")
+                .notes("신화 경험자 필수 / 워크로그 제출 요망\n보스: 알라르의 자손 벨로렌 → 한밤의 도래(르우라)")
                 .status(RaidStatus.CLOSED)
                 .createdBy(leader)
                 .build());
@@ -331,15 +331,16 @@ public class DataInitializer implements ApplicationRunner {
 
         postRepository.save(Post.builder()
                 .boardType(BoardType.NOTICE)
-                .title("[공지] 7월 레이드 일정 공개")
+                .title("[공지] 7월 레이드 일정 공개 - 공허첨탑 / 쿠엘탈라스 진격로")
                 .content("""
                         7월 레이드 일정을 공개합니다.
 
-                        • 7/5 (토) 21:00 - 노말 네루바르 궁전
-                        • 7/12 (토) 20:30 - 영웅 네루바르 궁전
-                        • 7/19 (토) 21:00 - 노말 재런
-                        • 7/26 (토) 20:30 - 영웅 재런
+                        • 7/5 (토) 21:00 - 노말 공허첨탑
+                        • 7/12 (토) 20:30 - 영웅 공허첨탑
+                        • 7/19 (토) 21:00 - 노말 공허첨탑 (2회차)
+                        • 7/26 (토) 20:30 - 쿠엘탈라스 진격로 신화
 
+                        꿈의 균열(1보스 카이메루스) 공략은 추후 일정 잡을 예정입니다.
                         신청은 레이드 일정 페이지에서 해주세요.
                         """)
                 .author(admin)
@@ -347,24 +348,27 @@ public class DataInitializer implements ApplicationRunner {
 
         postRepository.save(Post.builder()
                 .boardType(BoardType.FREE)
-                .title("이번 주 레이드 후기")
+                .title("쿠엘탈라스 진격로 신화 후기")
                 .content("""
-                        신화 레이드 3번 만에 1보스 잡았습니다!!
+                        신화 쿠엘탈라스 진격로 드디어 한밤의 도래(르우라) 잡았습니다!!
 
-                        다들 수고 많으셨어요. 특히 힐러분들 고생하셨습니다 ㅠㅠ
-                        다음 주도 파이팅!
+                        2보스 르우라 패턴이 생각보다 빡세네요.
+                        공허 균열 피하랴 불기둥 피하랴 정신없었지만 결국 클리어!
+                        다들 수고 많으셨어요. 힐러분들 특히 고생하셨습니다 ㅠㅠ
+                        다음엔 공허첨탑 신화 도전해봅시다!
                         """)
                 .author(member1)
                 .build());
 
         postRepository.save(Post.builder()
                 .boardType(BoardType.FREE)
-                .title("노말 레이드 신청했는데 처음인데 잘 부탁드립니다")
+                .title("공허첨탑 노말 처음 신청했습니다 잘 부탁드려요!")
                 .content("""
                         안녕하세요! 이번에 새로 가입한 달빛치킨입니다.
 
                         드루이드 균형 특성으로 딜러로 신청했는데
-                        레이드가 처음이라 많이 미숙할 수 있어요.
+                        공허첨탑이 처음이라 많이 미숙할 수 있어요.
+                        전제군주 아베르지안부터 차근차근 배워보겠습니다!
 
                         잘 부탁드립니다!
                         """)
@@ -373,14 +377,16 @@ public class DataInitializer implements ApplicationRunner {
 
         postRepository.save(Post.builder()
                 .boardType(BoardType.FREE)
-                .title("마법사 파싱 팁 공유")
+                .title("서리 마법사 공허첨탑 딜 파싱 팁 공유")
                 .content("""
-                        서리 마법사 딜 파싱 팁 공유합니다.
+                        서리 마법사로 공허첨탑 공략 팁 공유합니다.
 
                         1. 얼어붙기 - 아이시 베인스 유지 최우선
                         2. 한파 - 쿨타임마다 사용
                         3. 냉동 구체 - 얼어붙기 상태에서 사용하면 버프
-                        4. 수석 마법사 버프 - 파티원과 겹치지 않게 조율
+                        4. 4보스 바엘고어&에조라크 - 듀얼보스라 타겟 전환 타이밍 주의
+                        5. 최종 보스 우주의 왕관(알레리아) - 광역 공허 폭발 반드시 분산
+                        6. 수석 마법사 버프 - 파티원과 겹치지 않게 조율
 
                         질문 있으신 분은 댓글로 달아주세요~
                         """)

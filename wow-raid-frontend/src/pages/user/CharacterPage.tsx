@@ -64,7 +64,7 @@ export default function CharacterPage() {
           <p className="text-gray-500 text-sm text-center py-6">등록된 캐릭터가 없습니다.</p>
         ) : (
           <div className="space-y-2">
-            {characters.map((char) => (
+            {[...characters].sort((a, b) => (b.isMain ? 1 : 0) - (a.isMain ? 1 : 0)).map((char) => (
               <div
                 key={char.id}
                 className={`flex items-center justify-between bg-gray-800 rounded-xl px-4 py-3.5 ${

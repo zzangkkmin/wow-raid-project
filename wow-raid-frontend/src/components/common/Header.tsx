@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
 import { UserRole } from '@/types/enums'
 import { Sword } from 'lucide-react'
+import NotificationBell from '@/components/common/NotificationBell'
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuthStore()
@@ -13,7 +14,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+    <header className="bg-gray-900/80 backdrop-blur-md border-b border-gray-700/60 sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
         {/* 로고 */}
         <Link to="/" className="flex items-center gap-2 text-yellow-400 font-bold text-lg shrink-0">
@@ -35,7 +36,7 @@ export default function Header() {
               {user?.role === UserRole.ADMIN && (
                 <Link to="/admin" className="text-red-400 hover:text-red-300 transition-colors font-medium">어드민</Link>
               )}
-              <Link to="/notifications" className="text-gray-300 hover:text-white transition-colors">알림</Link>
+              <NotificationBell />
               <Link to="/my" className="text-yellow-400 hover:text-yellow-300 transition-colors font-medium">
                 {user?.username}
               </Link>

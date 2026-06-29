@@ -1,5 +1,7 @@
 package com.wowraid.domain.registration.service;
 
+import com.wowraid.domain.notification.enums.NotificationType;
+import com.wowraid.domain.notification.service.NotificationService;
 import com.wowraid.domain.raid.entity.RaidSchedule;
 import com.wowraid.domain.raid.service.RaidService;
 import com.wowraid.domain.registration.dto.request.GuestAuthRequest;
@@ -13,6 +15,7 @@ import com.wowraid.domain.registration.repository.RegistrationRepository;
 import com.wowraid.global.exception.BusinessException;
 import com.wowraid.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,8 @@ public class GuestRegistrationService {
     private final RegistrationRepository registrationRepository;
     private final RaidService raidService;
     private final PasswordEncoder passwordEncoder;
+    @Lazy
+    private final NotificationService notificationService;
 
     @Transactional
     public RegistrationResponse register(UUID raidId, GuestRegistrationRequest request) {
@@ -49,7 +54,13 @@ public class GuestRegistrationService {
                 .status(status)
                 .build();
 
-        return RegistrationResponse.fromGuest(guestRegistrationRepository.save(guest));
+        GuestRegistration saved = guestRegistrationRepository.save(guest);
+
+        // 레이드장에게 비회원 신청 알림
+        String msg = String.format("비회원 %s님이 [%s] 공격대에 신청했습니다.", request.guestName(), raid.getTitle());
+        notificationService.send(raid.getCreatedBy(), msg, NotificationType.REGISTRATION_COMPLETE, raid.getId());
+
+        return RegistrationResponse.fromGuest(saved);
     }
 
     @Transactional
@@ -68,6 +79,11 @@ public class GuestRegistrationService {
         RaidRole role = guest.getRole();
         guest.softDelete();
         if (wasConfirmed) promoteWaiting(raidId, role);
+
+        // 레이드장에게 취소 알림
+        RaidSchedule raid = raidService.findRaid(raidId);
+        String msg = String.format("비회원 %s님이 [%s] 공격대 신청을 취소했습니다.", guest.getGuestName(), raid.getTitle());
+        notificationService.send(raid.getCreatedBy(), msg, NotificationType.REGISTRATION_CANCELLED, raidId);
     }
 
     @Transactional

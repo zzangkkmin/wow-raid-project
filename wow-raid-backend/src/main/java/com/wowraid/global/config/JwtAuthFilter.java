@@ -43,6 +43,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
             return bearer.substring(7);
         }
+        // SSE 구독처럼 헤더를 못 붙이는 경우를 위한 쿼리스트링 fallback
+        String param = request.getParameter("token");
+        if (StringUtils.hasText(param)) {
+            return param;
+        }
         return null;
     }
 }

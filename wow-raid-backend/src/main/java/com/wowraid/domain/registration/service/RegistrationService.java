@@ -1,5 +1,7 @@
 package com.wowraid.domain.registration.service;
 
+import com.wowraid.domain.notification.enums.NotificationType;
+import com.wowraid.domain.notification.service.NotificationService;
 import com.wowraid.domain.raid.entity.RaidSchedule;
 import com.wowraid.domain.raid.service.RaidService;
 import com.wowraid.domain.registration.dto.request.AbsenceRequest;
@@ -15,6 +17,7 @@ import com.wowraid.domain.user.service.UserService;
 import com.wowraid.global.exception.BusinessException;
 import com.wowraid.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +31,8 @@ public class RegistrationService {
     private final GuestRegistrationRepository guestRegistrationRepository;
     private final RaidService raidService;
     private final UserService userService;
+    @Lazy
+    private final NotificationService notificationService;
 
     @Transactional
     public RegistrationResponse register(String username, UUID raidId, RegistrationRequest request) {
@@ -53,7 +58,14 @@ public class RegistrationService {
                 .status(status)
                 .build();
 
-        return RegistrationResponse.from(registrationRepository.save(registration));
+        Registration saved = registrationRepository.save(registration);
+
+        // 레이드장에게 신청 알림
+        User leader = raid.getCreatedBy();
+        String msg = String.format("%s님이 [%s] 공격대에 신청했습니다.", user.getUsername(), raid.getTitle());
+        notificationService.send(leader, msg, NotificationType.REGISTRATION_COMPLETE, raid.getId());
+
+        return RegistrationResponse.from(saved);
     }
 
     @Transactional
@@ -74,6 +86,11 @@ public class RegistrationService {
         RaidRole role = registration.getRole();
         registration.softDelete();
         if (wasConfirmed) promoteWaiting(raidId, role);
+
+        // 레이드장에게 취소 알림
+        RaidSchedule raid = raidService.findRaid(raidId);
+        String msg = String.format("%s님이 [%s] 공격대 신청을 취소했습니다.", user.getUsername(), raid.getTitle());
+        notificationService.send(raid.getCreatedBy(), msg, NotificationType.REGISTRATION_CANCELLED, raidId);
     }
 
     @Transactional

@@ -15,9 +15,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #030712;
+  background-image: url('/bg-midnight.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
   color: #f3f4f6;
 }
 
+/* 가독성을 위한 어두운 오버레이 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.55);
+  z-index: 0;
+  pointer-events: none;
+}
+
 #root {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
 }

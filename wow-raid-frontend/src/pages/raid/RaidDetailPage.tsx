@@ -56,7 +56,7 @@ export default function RaidDetailPage() {
     ? raid.registrations.find((r) => r.displayName === user?.username && !r.isGuest)
     : null
 
-  const canRegister = !isClosed && !isOwner
+  const canRegister = !isClosed
 
   function closeModal() {
     setShowModal(false)

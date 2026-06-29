@@ -40,9 +40,6 @@ public class RegistrationService {
         RaidSchedule raid = raidService.findRaid(raidId);
 
         validateRaidOpen(raid);
-        if (raid.getCreatedBy().getUsername().equals(username)) {
-            throw new BusinessException(ErrorCode.SELF_REGISTRATION_DENIED);
-        }
         if (registrationRepository.existsByRaidIdAndUserId(raidId, user.getId())) {
             throw new BusinessException(ErrorCode.DUPLICATE_REGISTRATION);
         }
@@ -60,10 +57,12 @@ public class RegistrationService {
 
         Registration saved = registrationRepository.save(registration);
 
-        // 레이드장에게 신청 알림
+        // 레이드장에게 신청 알림 (본인이 만든 레이드에 본인 신청 시 알림 제외)
         User leader = raid.getCreatedBy();
-        String msg = String.format("%s님이 [%s] 공격대에 신청했습니다.", user.getUsername(), raid.getTitle());
-        notificationService.send(leader, msg, NotificationType.REGISTRATION_COMPLETE, raid.getId());
+        if (!leader.getUsername().equals(user.getUsername())) {
+            String msg = String.format("%s님이 [%s] 공격대에 신청했습니다.", user.getUsername(), raid.getTitle());
+            notificationService.send(leader, msg, NotificationType.REGISTRATION_COMPLETE, raid.getId());
+        }
 
         return RegistrationResponse.from(saved);
     }

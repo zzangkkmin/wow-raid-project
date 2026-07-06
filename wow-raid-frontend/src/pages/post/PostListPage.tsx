@@ -54,35 +54,37 @@ export default function PostListPage() {
       </div>
 
       {/* 목록 */}
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : !data?.content.length ? (
-        <div className="text-center py-20 text-gray-500">게시글이 없습니다.</div>
-      ) : (
-        <div className="divide-y divide-gray-800">
-          {data.content.map((post) => (
-            <Link
-              key={post.id}
-              to={`/posts/${post.id}`}
-              className="flex items-center gap-4 py-4 hover:bg-gray-800 px-3 rounded-lg transition-colors group"
-            >
-              {post.pinned && <Pin className="w-4 h-4 text-yellow-400 shrink-0" />}
-              <div className="flex-1 min-w-0">
-                <p className="text-white group-hover:text-yellow-400 transition-colors truncate font-medium">
-                  {post.title}
-                </p>
-                <p className="text-gray-500 text-xs mt-0.5">
-                  {post.author} · {formatRelative(post.createdAt)}
-                </p>
-              </div>
-              <div className="flex items-center gap-1 text-gray-500 text-xs shrink-0">
-                <Eye className="w-3.5 h-3.5" />
-                {post.viewCount}
-              </div>
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden">
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : !data?.content.length ? (
+          <div className="text-center py-20 text-gray-500">게시글이 없습니다.</div>
+        ) : (
+          <div className="divide-y divide-gray-800">
+            {data.content.map((post) => (
+              <Link
+                key={post.id}
+                to={`/posts/${post.id}`}
+                className="flex items-center gap-4 py-4 hover:bg-gray-800 px-5 transition-colors group"
+              >
+                {post.pinned && <Pin className="w-4 h-4 text-yellow-400 shrink-0" />}
+                <div className="flex-1 min-w-0">
+                  <p className="text-white group-hover:text-yellow-400 transition-colors truncate font-medium">
+                    {post.title}
+                  </p>
+                  <p className="text-gray-500 text-xs mt-0.5">
+                    {post.author} · {formatRelative(post.createdAt)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 text-gray-500 text-xs shrink-0">
+                  <Eye className="w-3.5 h-3.5" />
+                  {post.viewCount}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

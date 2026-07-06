@@ -43,7 +43,8 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-8">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-md">
+        <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 shadow-2xl">
         {/* 헤더 */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-3">
@@ -158,6 +159,7 @@ export default function RegisterPage() {
             로그인
           </Link>
         </p>
+        </div>
       </div>
     </div>
   )

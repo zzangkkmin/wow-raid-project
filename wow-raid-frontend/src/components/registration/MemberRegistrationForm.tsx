@@ -41,6 +41,10 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
   const [mode, setMode] = useState<'my' | 'manual'>(characters.length > 0 ? 'my' : 'manual')
   const selectingChar = useRef(false)
 
+  // 탭별 상태 저장소
+  const mySnapshot = useRef<FormData | null>(null)
+  const manualSnapshot = useRef<FormData | null>(null)
+
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -50,8 +54,9 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
     },
   })
 
-  const selectedClass = watch('wowClass')
-  const selectedSpec  = watch('wowSpec')
+  const formValues    = watch()
+  const selectedClass = formValues.wowClass
+  const selectedSpec  = formValues.wowSpec
   const autoRole      = SPEC_ROLE[selectedSpec]
 
   // 캐릭터 로드 시 모드 초기화 + 대표 캐릭터 자동 선택
@@ -96,6 +101,36 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
     setTimeout(() => { selectingChar.current = false }, 0)
   }
 
+  const switchMode = (next: 'my' | 'manual') => {
+    if (next === mode) return
+    // 현재 탭 상태 저장
+    if (mode === 'my') mySnapshot.current = formValues
+    else manualSnapshot.current = formValues
+
+    if (next === 'manual') {
+      // 직접 입력: 이전에 입력한 값 복원, 없으면 빈 상태
+      const saved = manualSnapshot.current
+      selectingChar.current = true
+      setValue('characterName', saved?.characterName ?? '')
+      setValue('wowClass', saved?.wowClass ?? WowClass.WARRIOR)
+      setValue('wowSpec', saved?.wowSpec ?? defaultSpec)
+      setValue('role', saved?.role ?? SPEC_ROLE[defaultSpec])
+      setTimeout(() => { selectingChar.current = false }, 0)
+    } else {
+      // 내 캐릭터: 이전에 선택한 캐릭터 복원, 없으면 대표 캐릭터
+      const saved = mySnapshot.current
+      const main = characters.find((c) => c.isMain) ?? characters[0]
+      const restore = saved ?? { characterName: main.characterName, wowClass: main.wowClass, wowSpec: main.wowSpec, role: SPEC_ROLE[main.wowSpec] }
+      selectingChar.current = true
+      setValue('characterName', restore.characterName)
+      setValue('wowClass', restore.wowClass)
+      setValue('wowSpec', restore.wowSpec)
+      setValue('role', restore.role)
+      setTimeout(() => { selectingChar.current = false }, 0)
+    }
+    setMode(next)
+  }
+
   return (
     <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-4">
 
@@ -104,7 +139,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
         <div className="flex rounded-lg bg-gray-800 p-1 gap-1">
           <button
             type="button"
-            onClick={() => setMode('my')}
+            onClick={() => switchMode('my')}
             className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-colors ${
               mode === 'my' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
@@ -113,7 +148,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
           </button>
           <button
             type="button"
-            onClick={() => setMode('manual')}
+            onClick={() => switchMode('manual')}
             className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-colors ${
               mode === 'manual' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-white'
             }`}

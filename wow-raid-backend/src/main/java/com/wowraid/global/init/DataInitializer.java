@@ -111,7 +111,71 @@ public class DataInitializer implements ApplicationRunner {
                 .role(UserRole.MEMBER)
                 .build());
 
-        log.info("[DataInitializer] 유저 7명 생성 완료");
+        // ─── 꽉 찬 레이드용 추가 유저 (탱2/힐4/딜14 = 20명) ───────
+        User ironwall = userRepository.save(User.builder()
+                .username("ironwall").email("tank2@wowraid.com").password(pw)
+                .battletag("IronWall#1001").role(UserRole.MEMBER).build());
+
+        User heal2 = userRepository.save(User.builder()
+                .username("holylight").email("heal2@wowraid.com").password(pw)
+                .battletag("HolyLight#1002").role(UserRole.MEMBER).build());
+        User heal3 = userRepository.save(User.builder()
+                .username("mistweave").email("heal3@wowraid.com").password(pw)
+                .battletag("MistWeave#1003").role(UserRole.MEMBER).build());
+        User heal4 = userRepository.save(User.builder()
+                .username("restodruid").email("heal4@wowraid.com").password(pw)
+                .battletag("RestoDruid#1004").role(UserRole.MEMBER).build());
+
+        User dps1  = userRepository.save(User.builder()
+                .username("havocblade").email("dps1@wowraid.com").password(pw)
+                .battletag("HavocBlade#2001").role(UserRole.MEMBER).build());
+        User dps2  = userRepository.save(User.builder()
+                .username("windpunch").email("dps2@wowraid.com").password(pw)
+                .battletag("WindPunch#2002").role(UserRole.MEMBER).build());
+        User dps3  = userRepository.save(User.builder()
+                .username("firemage99").email("dps3@wowraid.com").password(pw)
+                .battletag("FireMage#2003").role(UserRole.MEMBER).build());
+        User dps4  = userRepository.save(User.builder()
+                .username("afflockz").email("dps4@wowraid.com").password(pw)
+                .battletag("AfflockZ#2004").role(UserRole.MEMBER).build());
+        User dps5  = userRepository.save(User.builder()
+                .username("shadowpriest").email("dps5@wowraid.com").password(pw)
+                .battletag("ShadowPriest#2005").role(UserRole.MEMBER).build());
+        User dps6  = userRepository.save(User.builder()
+                .username("furywarrior").email("dps6@wowraid.com").password(pw)
+                .battletag("FuryWarrior#2006").role(UserRole.MEMBER).build());
+        User dps7  = userRepository.save(User.builder()
+                .username("beastmaster").email("dps7@wowraid.com").password(pw)
+                .battletag("BeastMaster#2007").role(UserRole.MEMBER).build());
+        User dps8  = userRepository.save(User.builder()
+                .username("retpaladin").email("dps8@wowraid.com").password(pw)
+                .battletag("RetPaladin#2008").role(UserRole.MEMBER).build());
+        User dps9  = userRepository.save(User.builder()
+                .username("elemental99").email("dps9@wowraid.com").password(pw)
+                .battletag("Elemental#2009").role(UserRole.MEMBER).build());
+        User dps10 = userRepository.save(User.builder()
+                .username("outlaw99").email("dps10@wowraid.com").password(pw)
+                .battletag("Outlaw#2010").role(UserRole.MEMBER).build());
+        User dps11 = userRepository.save(User.builder()
+                .username("unholy99").email("dps11@wowraid.com").password(pw)
+                .battletag("Unholy#2011").role(UserRole.MEMBER).build());
+        User dps12 = userRepository.save(User.builder()
+                .username("devastation").email("dps12@wowraid.com").password(pw)
+                .battletag("Devastation#2012").role(UserRole.MEMBER).build());
+        User tank3 = userRepository.save(User.builder()
+                .username("voidtank").email("tank3@wowraid.com").password(pw)
+                .battletag("VoidTank#1003").role(UserRole.MEMBER).build());
+        User heal5 = userRepository.save(User.builder()
+                .username("lightwarden").email("heal5@wowraid.com").password(pw)
+                .battletag("LightWarden#1005").role(UserRole.MEMBER).build());
+        User dps13 = userRepository.save(User.builder()
+                .username("arcaneshot").email("dps13@wowraid.com").password(pw)
+                .battletag("ArcaneShot#2013").role(UserRole.MEMBER).build());
+        User dps14 = userRepository.save(User.builder()
+                .username("augdragon").email("dps14@wowraid.com").password(pw)
+                .battletag("AugDragon#2014").role(UserRole.MEMBER).build());
+
+        log.info("[DataInitializer] 유저 생성 완료");
 
         // ─── 캐릭터 생성 ───────────────────────────────────────────
         // raidleader - 성기사 탱커
@@ -174,6 +238,30 @@ public class DataInitializer implements ApplicationRunner {
                 .wowSpec(WowSpec.BALANCE)
                 .isMain(true)
                 .build());
+
+        // ─── 꽉 찬 레이드용 추가 캐릭터 (탱2/힐4/딜14) ──────────
+        characterRepository.save(UserCharacter.builder().user(ironwall).characterName("아이언월").wowClass(WowClass.WARRIOR).wowSpec(WowSpec.PROTECTION_WARRIOR).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(tank3).characterName("공허수호").wowClass(WowClass.DEMON_HUNTER).wowSpec(WowSpec.VENGEANCE).isMain(true).build());
+
+        characterRepository.save(UserCharacter.builder().user(heal2).characterName("성광치유").wowClass(WowClass.PALADIN).wowSpec(WowSpec.HOLY_PALADIN).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal3).characterName("안개직조").wowClass(WowClass.MONK).wowSpec(WowSpec.MISTWEAVER).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal4).characterName("자연치유").wowClass(WowClass.DRUID).wowSpec(WowSpec.RESTORATION_DRUID).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal5).characterName("빛의수호").wowClass(WowClass.PRIEST).wowSpec(WowSpec.DISCIPLINE).isMain(true).build());
+
+        characterRepository.save(UserCharacter.builder().user(dps1).characterName("파멸사냥꾼").wowClass(WowClass.DEMON_HUNTER).wowSpec(WowSpec.HAVOC).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps2).characterName("풍운격격").wowClass(WowClass.MONK).wowSpec(WowSpec.WINDWALKER).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps3).characterName("화염비").wowClass(WowClass.MAGE).wowSpec(WowSpec.FIRE).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps4).characterName("고통술사").wowClass(WowClass.WARLOCK).wowSpec(WowSpec.AFFLICTION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps5).characterName("암흑사제").wowClass(WowClass.PRIEST).wowSpec(WowSpec.SHADOW).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps6).characterName("분노전사").wowClass(WowClass.WARRIOR).wowSpec(WowSpec.FURY).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps7).characterName("야수지배").wowClass(WowClass.HUNTER).wowSpec(WowSpec.BEAST_MASTERY).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps8).characterName("징벌성기").wowClass(WowClass.PALADIN).wowSpec(WowSpec.RETRIBUTION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps9).characterName("원소폭풍").wowClass(WowClass.SHAMAN).wowSpec(WowSpec.ELEMENTAL).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps10).characterName("무법자").wowClass(WowClass.ROGUE).wowSpec(WowSpec.OUTLAW).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps11).characterName("부정기사").wowClass(WowClass.DEATH_KNIGHT).wowSpec(WowSpec.UNHOLY).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps12).characterName("황폐용기").wowClass(WowClass.EVOKER).wowSpec(WowSpec.DEVASTATION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps13).characterName("사격수").wowClass(WowClass.HUNTER).wowSpec(WowSpec.MARKSMANSHIP).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps14).characterName("증강용기").wowClass(WowClass.EVOKER).wowSpec(WowSpec.AUGMENTATION).isMain(true).build());
 
         log.info("[DataInitializer] 캐릭터 생성 완료");
 
@@ -309,6 +397,68 @@ public class DataInitializer implements ApplicationRunner {
 
         log.info("[DataInitializer] 신청 데이터 생성 완료");
 
+        // ─── 꽉 찬 레이드 (탱2/힐4/딜14 = 20명 전원 CONFIRMED) ──
+        RaidSchedule fullRaid = raidRepository.save(RaidSchedule.builder()
+                .title("[영웅] 공허첨탑 풀파티 진행 (마감)")
+                .raidDate(LocalDateTime.now().plusDays(3).withHour(20).withMinute(0).withSecond(0))
+                .difficulty(Difficulty.HEROIC)
+                .maxTanks(2)
+                .maxHealers(4)
+                .maxDps(14)
+                .notes("정원이 꽉 찬 예시 레이드입니다.")
+                .status(RaidStatus.OPEN)
+                .createdBy(leader)
+                .build());
+
+        // 탱 2명
+        for (Object[] entry : new Object[][]{
+                {ironwall, "아이언월", WowClass.WARRIOR, WowSpec.PROTECTION_WARRIOR, RaidRole.TANK},
+                {tank3,    "공허수호", WowClass.DEMON_HUNTER, WowSpec.VENGEANCE,          RaidRole.TANK},
+        }) {
+            registrationRepository.save(Registration.builder()
+                    .raidSchedule(fullRaid).user((User) entry[0])
+                    .characterName((String) entry[1]).wowClass((WowClass) entry[2])
+                    .wowSpec((WowSpec) entry[3]).role((RaidRole) entry[4])
+                    .status(RegistrationStatus.CONFIRMED).build());
+        }
+        // 힐 4명
+        for (Object[] entry : new Object[][]{
+                {heal2, "성광치유", WowClass.PALADIN, WowSpec.HOLY_PALADIN,        RaidRole.HEALER},
+                {heal3, "안개직조", WowClass.MONK,    WowSpec.MISTWEAVER,          RaidRole.HEALER},
+                {heal4, "자연치유", WowClass.DRUID,   WowSpec.RESTORATION_DRUID,   RaidRole.HEALER},
+                {heal5, "빛의수호", WowClass.PRIEST,  WowSpec.DISCIPLINE,          RaidRole.HEALER},
+        }) {
+            registrationRepository.save(Registration.builder()
+                    .raidSchedule(fullRaid).user((User) entry[0])
+                    .characterName((String) entry[1]).wowClass((WowClass) entry[2])
+                    .wowSpec((WowSpec) entry[3]).role((RaidRole) entry[4])
+                    .status(RegistrationStatus.CONFIRMED).build());
+        }
+        // 딜 14명
+        for (Object[] entry : new Object[][]{
+                {dps1,  "파멸사냥꾼", WowClass.DEMON_HUNTER, WowSpec.HAVOC,             RaidRole.DPS},
+                {dps2,  "풍운격격",   WowClass.MONK,         WowSpec.WINDWALKER,        RaidRole.DPS},
+                {dps3,  "화염비",     WowClass.MAGE,         WowSpec.FIRE,              RaidRole.DPS},
+                {dps4,  "고통술사",   WowClass.WARLOCK,      WowSpec.AFFLICTION,        RaidRole.DPS},
+                {dps5,  "암흑사제",   WowClass.PRIEST,       WowSpec.SHADOW,            RaidRole.DPS},
+                {dps6,  "분노전사",   WowClass.WARRIOR,      WowSpec.FURY,              RaidRole.DPS},
+                {dps7,  "야수지배",   WowClass.HUNTER,       WowSpec.BEAST_MASTERY,     RaidRole.DPS},
+                {dps8,  "징벌성기",   WowClass.PALADIN,      WowSpec.RETRIBUTION,       RaidRole.DPS},
+                {dps9,  "원소폭풍",   WowClass.SHAMAN,       WowSpec.ELEMENTAL,         RaidRole.DPS},
+                {dps10, "무법자",     WowClass.ROGUE,        WowSpec.OUTLAW,            RaidRole.DPS},
+                {dps11, "부정기사",   WowClass.DEATH_KNIGHT, WowSpec.UNHOLY,            RaidRole.DPS},
+                {dps12, "황폐용기",   WowClass.EVOKER,       WowSpec.DEVASTATION,       RaidRole.DPS},
+                {dps13, "사격수",     WowClass.HUNTER,       WowSpec.MARKSMANSHIP,      RaidRole.DPS},
+                {dps14, "증강용기",   WowClass.EVOKER,       WowSpec.AUGMENTATION,      RaidRole.DPS},
+        }) {
+            registrationRepository.save(Registration.builder()
+                    .raidSchedule(fullRaid).user((User) entry[0])
+                    .characterName((String) entry[1]).wowClass((WowClass) entry[2])
+                    .wowSpec((WowSpec) entry[3]).role((RaidRole) entry[4])
+                    .status(RegistrationStatus.CONFIRMED).build());
+        }
+        log.info("[DataInitializer] 꽉 찬 레이드 데이터 생성 완료 (20명 CONFIRMED)");
+
         // ─── 게시글 ────────────────────────────────────────────────
         postRepository.save(Post.builder()
                 .boardType(BoardType.NOTICE)
@@ -398,10 +548,13 @@ public class DataInitializer implements ApplicationRunner {
         log.info("[DataInitializer] 계정 목록 (비밀번호: password123)");
         log.info("[DataInitializer]   admin       - ADMIN");
         log.info("[DataInitializer]   raidleader  - RAID_LEADER");
-        log.info("[DataInitializer]   darkknightzz - MEMBER");
-        log.info("[DataInitializer]   healbot9000 - MEMBER");
-        log.info("[DataInitializer]   shadowstab  - MEMBER");
-        log.info("[DataInitializer]   frostmage   - MEMBER");
-        log.info("[DataInitializer]   boomchicken - MEMBER");
+        log.info("[DataInitializer]   darkknightzz - MEMBER (탱)");
+        log.info("[DataInitializer]   healbot9000  - MEMBER (힐)");
+        log.info("[DataInitializer]   shadowstab   - MEMBER (딜)");
+        log.info("[DataInitializer]   frostmage    - MEMBER (딜)");
+        log.info("[DataInitializer]   boomchicken  - MEMBER (딜)");
+        log.info("[DataInitializer] 꽉 찬 레이드 전용 유저 (탱2/힐4/딜14):");
+        log.info("[DataInitializer]   ironwall/voidtank (탱), holylight/mistweave/restodruid/lightwarden (힐)");
+        log.info("[DataInitializer]   havocblade/windpunch/firemage99/afflockz/shadowpriest/furywarrior/beastmaster/retpaladin/elemental99/outlaw99/unholy99/devastation/arcaneshot/augdragon (딜)");
     }
 }

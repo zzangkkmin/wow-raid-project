@@ -64,7 +64,7 @@ export default function RaidDetailPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       {/* 뒤로가기 */}
       <Link to="/" className="flex items-center gap-1 text-gray-400 hover:text-white text-sm mb-6 transition-colors w-fit">
         <ChevronLeft className="w-4 h-4" />

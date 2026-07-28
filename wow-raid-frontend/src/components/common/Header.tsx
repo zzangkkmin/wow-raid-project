@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <header className="bg-gray-900/80 backdrop-blur-md border-b border-gray-700/60 sticky top-0 z-50">
-      <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
         {/* 로고 */}
         <Link to="/" className="flex items-center gap-2 text-yellow-400 font-bold text-lg shrink-0">
           <Sword className="w-5 h-5" />

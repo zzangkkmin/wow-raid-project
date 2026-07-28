@@ -49,7 +49,7 @@ export default function RegistrationList({ registrations }: Props) {
             {byRole[role].length === 0 ? (
               <p className="text-gray-600 text-sm pl-2">신청자 없음</p>
             ) : (
-              <div className="space-y-1.5">
+              <div className={role === RaidRole.DPS ? 'grid grid-cols-2 gap-1.5' : 'space-y-1.5'}>
                 {byRole[role].map((r) => (
                   <div
                     key={r.id}

@@ -24,8 +24,9 @@ export default function RaidDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user, isAuthenticated } = useAuthStore()
-  const [showModal, setShowModal]     = useState(false)
+  const [showModal, setShowModal]         = useState(false)
   const [showGuestForm, setShowGuestForm] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const { data: raid, isLoading } = useQuery({
     queryKey: ['raid', id],
@@ -73,6 +74,7 @@ export default function RaidDetailPage() {
 
       {/* 레이드 헤더 */}
       <div className="bg-gray-900 border border-gray-700 rounded-2xl p-7 mb-6">
+        {/* 상단: 제목/메타 + 버튼 */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
@@ -97,32 +99,51 @@ export default function RaidDetailPage() {
               </span>
               <span className="text-gray-500">공격대장: {raid.createdBy}</span>
             </div>
-            {raid.notes && (
-              <p className="mt-3 text-gray-300 text-sm bg-gray-700 rounded-lg px-4 py-3 whitespace-pre-wrap">
-                {raid.notes}
-              </p>
-            )}
           </div>
 
           {/* 오른쪽 액션 버튼 영역 */}
           <div className="flex flex-col items-end gap-2 shrink-0">
             {/* 오너 관리 버튼 */}
             {isOwner && (
-              <div className="flex gap-2">
-                <Link
-                  to={`/raids/${id}/edit`}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
-                >
-                  <Edit className="w-3.5 h-3.5" />
-                  수정
-                </Link>
-                <button
-                  onClick={() => { if (confirm('레이드를 삭제하시겠습니까?')) deleteMutation.mutate() }}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-red-900 hover:bg-red-800 text-red-300 text-sm rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  삭제
-                </button>
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex gap-2">
+                  <Link
+                    to={`/raids/${id}/edit`}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                    수정
+                  </Link>
+                  <button
+                    onClick={() => setConfirmDelete((v) => !v)}
+                    className={`flex items-center gap-1 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                      confirmDelete
+                        ? 'bg-red-700 text-white'
+                        : 'bg-red-900 hover:bg-red-800 text-red-300'
+                    }`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    삭제
+                  </button>
+                </div>
+                {confirmDelete && (
+                  <div className="flex items-center gap-2 bg-red-950/40 border border-red-800 rounded-lg px-3 py-2">
+                    <span className="text-red-300 text-xs">정말 삭제하시겠습니까?</span>
+                    <button
+                      onClick={() => deleteMutation.mutate()}
+                      disabled={deleteMutation.isPending}
+                      className="px-2.5 py-1 bg-red-700 hover:bg-red-600 disabled:opacity-50 text-white text-xs rounded-md transition-colors"
+                    >
+                      삭제
+                    </button>
+                    <button
+                      onClick={() => setConfirmDelete(false)}
+                      className="px-2.5 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs rounded-md transition-colors"
+                    >
+                      취소
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -153,6 +174,13 @@ export default function RaidDetailPage() {
             )}
           </div>
         </div>
+
+        {/* 노트: 전체 너비 */}
+        {raid.notes && (
+          <p className="mt-4 text-gray-300 text-sm bg-gray-700 rounded-lg px-4 py-3 whitespace-pre-wrap">
+            {raid.notes}
+          </p>
+        )}
       </div>
 
       {/* 공격대 구성 + 신청자 목록 */}

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { RaidStatsResponse, RoleStats } from '@/types/raid.types'
 import type { RegistrationResponse } from '@/types/registration.types'
 import { WowClass, RaidRole, RegistrationStatus } from '@/types/enums'
@@ -5,8 +6,12 @@ import { WOW_CLASS_KR, WOW_CLASS_COLOR, WOW_SPEC_KR, RAID_ROLE_KR, REGISTRATION_
 import WowClassIcon from '@/components/common/WowClassIcon'
 import RaidRoleIcon from '@/components/common/RaidRoleIcon'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
+import { Settings } from 'lucide-react'
+import GuestActionModal from '@/components/registration/GuestActionModal'
 
 interface Props {
+  raidId: string
+  isClosed: boolean
   stats: RaidStatsResponse
   registrations: RegistrationResponse[]
 }
@@ -134,11 +139,17 @@ function RoleCard({
   role,
   roleStats,
   roleRegistrations,
+  raidId,
+  isClosed,
 }: {
   role: RaidRole
   roleStats: RoleStats
   roleRegistrations: RegistrationResponse[]
+  raidId: string
+  isClosed: boolean
 }) {
+  const [guestTarget, setGuestTarget] = useState<RegistrationResponse | null>(null)
+
   const fillPct = roleStats.maxSlots > 0
     ? Math.min(100, Math.round((roleStats.confirmed / roleStats.maxSlots) * 100))
     : 0
@@ -214,15 +225,34 @@ function RoleCard({
                   )}
                 </div>
               </div>
-              <span
-                className="text-[10px] font-semibold shrink-0 px-1.5 py-0.5 rounded"
-                style={{ color: WOW_CLASS_COLOR[r.wowClass], backgroundColor: `${WOW_CLASS_COLOR[r.wowClass]}22` }}
-              >
-                {WOW_SPEC_KR[r.wowSpec]}
-              </span>
+              <div className="flex items-center gap-1 shrink-0">
+                <span
+                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded"
+                  style={{ color: WOW_CLASS_COLOR[r.wowClass], backgroundColor: `${WOW_CLASS_COLOR[r.wowClass]}22` }}
+                >
+                  {WOW_SPEC_KR[r.wowSpec]}
+                </span>
+                {r.isGuest && !isClosed && (
+                  <button
+                    onClick={() => setGuestTarget(r)}
+                    className="text-gray-600 hover:text-gray-300 transition-colors"
+                    title="비회원 신청 관리"
+                  >
+                    <Settings className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
+      )}
+
+      {guestTarget && (
+        <GuestActionModal
+          raidId={raidId}
+          registration={guestTarget}
+          onClose={() => setGuestTarget(null)}
+        />
       )}
 
     </div>
@@ -231,7 +261,7 @@ function RoleCard({
 
 // ── 메인 컴포넌트 ────────────────────────────────────────────────────────────────
 
-export default function RaidStats({ stats, registrations }: Props) {
+export default function RaidStats({ raidId, isClosed, stats, registrations }: Props) {
   const allClasses = Object.values(WowClass)
 
   const overallMissing = allClasses.filter((cls) => {
@@ -252,6 +282,8 @@ export default function RaidStats({ stats, registrations }: Props) {
             role={role}
             roleStats={getRoleStats(stats, role)}
             roleRegistrations={registrations.filter((r) => r.role === role)}
+            raidId={raidId}
+            isClosed={isClosed}
           />
         ))}
       </div>

@@ -157,7 +157,7 @@ export default function RaidDetailPage() {
 
       {/* 공격대 구성 + 신청자 목록 */}
       <div className="mb-6">
-        <RaidStats stats={raid.stats} registrations={raid.registrations} />
+        <RaidStats raidId={id!} isClosed={isClosed} stats={raid.stats} registrations={raid.registrations} />
       </div>
 
       {/* 신청 모달 */}

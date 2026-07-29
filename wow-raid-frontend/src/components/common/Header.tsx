@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
 import { UserRole } from '@/types/enums'
-import { Sword } from 'lucide-react'
+import { Sword, ShieldCheck } from 'lucide-react'
 import NotificationBell from '@/components/common/NotificationBell'
 
 export default function Header() {
@@ -34,7 +34,13 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               {user?.role === UserRole.ADMIN && (
-                <Link to="/admin" className="text-red-400 hover:text-red-300 transition-colors font-medium">어드민</Link>
+                <Link
+                  to="/admin"
+                  title="관리자 설정"
+                  className="flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/20 hover:border-red-500/40 hover:text-red-300 transition-all"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                </Link>
               )}
               <NotificationBell />
               <Link to="/my" className="text-yellow-400 hover:text-yellow-300 transition-colors font-medium">

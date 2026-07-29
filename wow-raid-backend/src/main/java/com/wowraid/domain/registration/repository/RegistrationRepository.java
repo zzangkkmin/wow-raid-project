@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public interface RegistrationRepository extends JpaRepository<Registration, UUID> {
 
-    @Query("SELECT r FROM Registration r WHERE r.raidSchedule.id = :raidId AND r.deletedAt IS NULL")
+    @Query("SELECT r FROM Registration r WHERE r.raidSchedule.id = :raidId AND r.deletedAt IS NULL ORDER BY r.createdAt ASC")
     List<Registration> findAllByRaidId(@Param("raidId") UUID raidId);
 
     @Query("SELECT r FROM Registration r WHERE r.raidSchedule.id = :raidId AND r.user.id = :userId AND r.deletedAt IS NULL")

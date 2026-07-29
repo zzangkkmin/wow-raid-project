@@ -1,4 +1,5 @@
 import type { RaidRole, RegistrationStatus, WowClass, WowSpec } from './enums'
+export type { RegistrationStatus } from './enums'
 
 export interface RegistrationResponse {
   id: string

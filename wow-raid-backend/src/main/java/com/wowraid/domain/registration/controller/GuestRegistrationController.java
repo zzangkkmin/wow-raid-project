@@ -2,12 +2,15 @@ package com.wowraid.domain.registration.controller;
 
 import com.wowraid.domain.registration.dto.request.GuestAuthRequest;
 import com.wowraid.domain.registration.dto.request.GuestRegistrationRequest;
+import com.wowraid.domain.registration.dto.request.RegistrationStatusRequest;
 import com.wowraid.domain.registration.dto.response.RegistrationResponse;
 import com.wowraid.domain.registration.service.GuestRegistrationService;
 import com.wowraid.global.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -47,5 +50,13 @@ public class GuestRegistrationController {
                                             @Valid @RequestBody GuestAuthRequest request) {
         guestRegistrationService.reportAbsence(raidId, id, request);
         return ApiResponse.ok("불참 신고가 완료되었습니다.");
+    }
+
+    @PatchMapping("/{id}/status")
+    public ApiResponse<RegistrationResponse> changeStatus(@AuthenticationPrincipal UserDetails user,
+                                                           @PathVariable UUID raidId,
+                                                           @PathVariable UUID id,
+                                                           @Valid @RequestBody RegistrationStatusRequest request) {
+        return ApiResponse.ok(guestRegistrationService.changeStatus(user.getUsername(), raidId, id, request));
     }
 }

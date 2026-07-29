@@ -6,6 +6,7 @@ import com.wowraid.domain.raid.entity.RaidSchedule;
 import com.wowraid.domain.raid.service.RaidService;
 import com.wowraid.domain.registration.dto.request.GuestAuthRequest;
 import com.wowraid.domain.registration.dto.request.GuestRegistrationRequest;
+import com.wowraid.domain.registration.dto.request.RegistrationStatusRequest;
 import com.wowraid.domain.registration.dto.response.RegistrationResponse;
 import com.wowraid.domain.registration.entity.GuestRegistration;
 import com.wowraid.domain.registration.enums.RaidRole;
@@ -85,6 +86,18 @@ public class GuestRegistrationService {
         RaidSchedule raid = raidService.findRaid(raidId);
         String msg = String.format("비회원 %s님이 [%s] 공격대 신청을 취소했습니다.", guest.getGuestName(), raid.getTitle());
         notificationService.send(raid.getCreatedBy(), msg, NotificationType.REGISTRATION_CANCELLED, raidId);
+    }
+
+    @Transactional
+    public RegistrationResponse changeStatus(String leaderUsername, UUID raidId, UUID id, RegistrationStatusRequest request) {
+        RaidSchedule raid = raidService.findRaid(raidId);
+        if (!raid.getCreatedBy().getUsername().equals(leaderUsername)) {
+            throw new BusinessException(ErrorCode.RAID_ACCESS_DENIED);
+        }
+        GuestRegistration guest = guestRegistrationRepository.findActiveById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.REGISTRATION_NOT_FOUND));
+        guest.changeStatus(request.status());
+        return RegistrationResponse.fromGuest(guest);
     }
 
     @Transactional

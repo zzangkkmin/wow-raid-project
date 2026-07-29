@@ -2,6 +2,7 @@ package com.wowraid.domain.registration.controller;
 
 import com.wowraid.domain.registration.dto.request.AbsenceRequest;
 import com.wowraid.domain.registration.dto.request.RegistrationRequest;
+import com.wowraid.domain.registration.dto.request.RegistrationStatusRequest;
 import com.wowraid.domain.registration.dto.response.RegistrationResponse;
 import com.wowraid.domain.registration.service.RegistrationService;
 import com.wowraid.global.common.response.ApiResponse;
@@ -49,5 +50,13 @@ public class RegistrationController {
                                             @Valid @RequestBody AbsenceRequest request) {
         registrationService.reportAbsence(user.getUsername(), raidId, request);
         return ApiResponse.ok("불참 신고가 완료되었습니다.");
+    }
+
+    @PatchMapping("/{registrationId}/status")
+    public ApiResponse<RegistrationResponse> changeStatus(@AuthenticationPrincipal UserDetails user,
+                                                           @PathVariable UUID raidId,
+                                                           @PathVariable UUID registrationId,
+                                                           @Valid @RequestBody RegistrationStatusRequest request) {
+        return ApiResponse.ok(registrationService.changeStatus(user.getUsername(), raidId, registrationId, request));
     }
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { RaidStatsResponse, RoleStats } from '@/types/raid.types'
 import type { RegistrationResponse } from '@/types/registration.types'
 import { WowClass, RaidRole, RegistrationStatus } from '@/types/enums'
@@ -8,10 +9,12 @@ import RaidRoleIcon from '@/components/common/RaidRoleIcon'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { Settings } from 'lucide-react'
 import GuestActionModal from '@/components/registration/GuestActionModal'
+import { registrationApi, guestRegistrationApi } from '@/api/registration.api'
 
 interface Props {
   raidId: string
   isClosed: boolean
+  isOwner: boolean
   stats: RaidStatsResponse
   registrations: RegistrationResponse[]
 }
@@ -135,18 +138,87 @@ function getRoleStats(stats: RaidStatsResponse, role: RaidRole): RoleStats {
 
 // ── 역할 카드 ────────────────────────────────────────────────────────────────
 
+const STATUS_OPTIONS = [
+  { value: RegistrationStatus.CONFIRMED, label: '확정', dot: 'bg-green-400' },
+  { value: RegistrationStatus.WAITING,   label: '대기', dot: 'bg-yellow-400' },
+  { value: RegistrationStatus.ABSENT,    label: '불참', dot: 'bg-red-500' },
+]
+
+function StatusDot({ reg, raidId, isOwner }: { reg: RegistrationResponse; raidId: string; isOwner: boolean }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  const mutation = useMutation({
+    mutationFn: (status: RegistrationStatus) =>
+      reg.isGuest
+        ? guestRegistrationApi.changeStatus(raidId, reg.id, status)
+        : registrationApi.changeStatus(raidId, reg.id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['raid', raidId] })
+      setOpen(false)
+    },
+  })
+
+  const dotColor = reg.status === RegistrationStatus.CONFIRMED ? 'bg-green-400'
+    : reg.status === RegistrationStatus.WAITING ? 'bg-yellow-400'
+    : 'bg-red-500'
+
+  if (!isOwner) {
+    return <span className={`w-2 h-2 rounded-full shrink-0 ${dotColor}`} />
+  }
+
+  return (
+    <div className="relative shrink-0" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        title="상태 변경"
+        className={`w-2 h-2 rounded-full block hover:ring-2 hover:ring-white/30 transition-all ${dotColor}`}
+      />
+      {open && (
+        <div className="absolute left-0 top-3 z-20 bg-gray-800 border border-gray-600 rounded-lg shadow-xl overflow-hidden w-16">
+          {STATUS_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => mutation.mutate(opt.value)}
+              disabled={mutation.isPending || reg.status === opt.value}
+              className={`w-full flex items-center gap-1.5 px-2 py-1.5 text-[11px] hover:bg-gray-700 transition-colors disabled:opacity-40 ${
+                reg.status === opt.value ? 'text-white' : 'text-gray-300'
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${opt.dot}`} />
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function RoleCard({
   role,
   roleStats,
   roleRegistrations,
   raidId,
   isClosed,
+  isOwner,
 }: {
   role: RaidRole
   roleStats: RoleStats
   roleRegistrations: RegistrationResponse[]
   raidId: string
   isClosed: boolean
+  isOwner: boolean
 }) {
   const [guestTarget, setGuestTarget] = useState<RegistrationResponse | null>(null)
 
@@ -210,11 +282,7 @@ function RoleCard({
               }`}
             >
               <div className="flex items-center gap-1.5 min-w-0">
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                  r.status === RegistrationStatus.CONFIRMED ? 'bg-green-400'
-                  : r.status === RegistrationStatus.WAITING ? 'bg-yellow-400'
-                  : 'bg-red-500'
-                }`} />
+                <StatusDot reg={r} raidId={raidId} isOwner={isOwner} />
                 <div className="min-w-0">
                   <div className="flex items-center gap-1">
                     <span className="text-white text-xs font-medium truncate">{r.characterName}</span>
@@ -261,7 +329,7 @@ function RoleCard({
 
 // ── 메인 컴포넌트 ────────────────────────────────────────────────────────────────
 
-export default function RaidStats({ raidId, isClosed, stats, registrations }: Props) {
+export default function RaidStats({ raidId, isClosed, isOwner, stats, registrations }: Props) {
   const allClasses = Object.values(WowClass)
 
   const overallMissing = allClasses.filter((cls) => {
@@ -284,6 +352,7 @@ export default function RaidStats({ raidId, isClosed, stats, registrations }: Pr
             roleRegistrations={registrations.filter((r) => r.role === role)}
             raidId={raidId}
             isClosed={isClosed}
+            isOwner={isOwner}
           />
         ))}
       </div>

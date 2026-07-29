@@ -5,6 +5,7 @@ import type {
   GuestRegistrationRequest,
   RegistrationRequest,
   RegistrationResponse,
+  RegistrationStatus,
 } from '@/types/registration.types'
 
 export const registrationApi = {
@@ -19,6 +20,9 @@ export const registrationApi = {
 
   reportAbsence: (raidId: string, data: AbsenceRequest) =>
     client.patch<void, void>(`/api/raids/${raidId}/registrations/me/absence`, data),
+
+  changeStatus: (raidId: string, registrationId: string, status: RegistrationStatus) =>
+    client.patch<void, RegistrationResponse>(`/api/raids/${raidId}/registrations/${registrationId}/status`, { status }),
 }
 
 export const guestRegistrationApi = {
@@ -33,4 +37,7 @@ export const guestRegistrationApi = {
 
   reportAbsence: (raidId: string, id: string, data: GuestAuthRequest) =>
     client.patch<void, void>(`/api/raids/${raidId}/guest-registrations/${id}/absence`, data),
+
+  changeStatus: (raidId: string, id: string, status: RegistrationStatus) =>
+    client.patch<void, RegistrationResponse>(`/api/raids/${raidId}/guest-registrations/${id}/status`, { status }),
 }

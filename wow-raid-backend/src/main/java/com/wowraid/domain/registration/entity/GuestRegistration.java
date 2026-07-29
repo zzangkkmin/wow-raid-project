@@ -78,4 +78,9 @@ public class GuestRegistration extends BaseEntity {
         this.status = RegistrationStatus.ABSENT;
         this.absenceReason = reason;
     }
+
+    public void changeStatus(RegistrationStatus newStatus) {
+        this.status = newStatus;
+        if (newStatus != RegistrationStatus.ABSENT) this.absenceReason = null;
+    }
 }

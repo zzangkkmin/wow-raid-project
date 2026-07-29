@@ -6,6 +6,7 @@ import com.wowraid.domain.raid.entity.RaidSchedule;
 import com.wowraid.domain.raid.service.RaidService;
 import com.wowraid.domain.registration.dto.request.AbsenceRequest;
 import com.wowraid.domain.registration.dto.request.RegistrationRequest;
+import com.wowraid.domain.registration.dto.request.RegistrationStatusRequest;
 import com.wowraid.domain.registration.dto.response.RegistrationResponse;
 import com.wowraid.domain.registration.entity.Registration;
 import com.wowraid.domain.registration.enums.RaidRole;
@@ -105,6 +106,18 @@ public class RegistrationService {
         registration.absent(request.reason());
         registration.softDelete();
         if (wasConfirmed) promoteWaiting(raidId, role);
+    }
+
+    @Transactional
+    public RegistrationResponse changeStatus(String leaderUsername, UUID raidId, UUID registrationId, RegistrationStatusRequest request) {
+        RaidSchedule raid = raidService.findRaid(raidId);
+        if (!raid.getCreatedBy().getUsername().equals(leaderUsername)) {
+            throw new BusinessException(ErrorCode.RAID_ACCESS_DENIED);
+        }
+        Registration registration = registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.REGISTRATION_NOT_FOUND));
+        registration.changeStatus(request.status());
+        return RegistrationResponse.from(registration);
     }
 
     // ── private helpers ──────────────────────────────────────────────────────

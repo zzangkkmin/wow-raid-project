@@ -22,6 +22,7 @@ public enum ErrorCode {
     // Character
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "캐릭터를 찾을 수 없습니다."),
     CHARACTER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "본인의 캐릭터만 수정할 수 있습니다."),
+    DUPLICATE_CHARACTER(HttpStatus.CONFLICT, "같은 서버에 동일한 이름의 캐릭터가 이미 존재합니다."),
 
     // Raid
     RAID_NOT_FOUND(HttpStatus.NOT_FOUND, "레이드를 찾을 수 없습니다."),

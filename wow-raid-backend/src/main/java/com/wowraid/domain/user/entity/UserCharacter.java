@@ -24,6 +24,9 @@ public class UserCharacter extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "server", nullable = false, length = 30)
+    private String server;
+
     @Column(name = "character_name", nullable = false, length = 50)
     private String characterName;
 

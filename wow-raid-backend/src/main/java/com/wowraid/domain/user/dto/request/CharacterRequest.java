@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record CharacterRequest(
+        @NotBlank @Size(max = 30) String server,
         @NotBlank @Size(max = 50) String characterName,
         @NotNull WowClass wowClass,
         @NotNull WowSpec wowSpec

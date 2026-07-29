@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record CharacterResponse(
         UUID id,
+        String server,
         String characterName,
         WowClass wowClass,
         WowSpec wowSpec,
@@ -16,6 +17,7 @@ public record CharacterResponse(
     public static CharacterResponse from(UserCharacter character) {
         return new CharacterResponse(
                 character.getId(),
+                character.getServer(),
                 character.getCharacterName(),
                 character.getWowClass(),
                 character.getWowSpec(),

@@ -180,88 +180,67 @@ public class DataInitializer implements ApplicationRunner {
         // ─── 캐릭터 생성 ───────────────────────────────────────────
         // raidleader - 성기사 탱커
         characterRepository.save(UserCharacter.builder()
-                .user(leader)
+                .user(leader).server("아즈샤라")
                 .characterName("팔라딘킹")
-                .wowClass(WowClass.PALADIN)
-                .wowSpec(WowSpec.PROTECTION_PALADIN)
-                .isMain(true)
-                .build());
+                .wowClass(WowClass.PALADIN).wowSpec(WowSpec.PROTECTION_PALADIN).isMain(true).build());
 
         // member1 - 죽음의 기사 탱커 (메인) + 전사 딜러 (부캐)
         characterRepository.save(UserCharacter.builder()
-                .user(member1)
+                .user(member1).server("아즈샤라")
                 .characterName("다크나이트")
-                .wowClass(WowClass.DEATH_KNIGHT)
-                .wowSpec(WowSpec.BLOOD)
-                .isMain(true)
-                .build());
+                .wowClass(WowClass.DEATH_KNIGHT).wowSpec(WowSpec.BLOOD).isMain(true).build());
         characterRepository.save(UserCharacter.builder()
-                .user(member1)
+                .user(member1).server("하이잘")
                 .characterName("퓨리워리어")
-                .wowClass(WowClass.WARRIOR)
-                .wowSpec(WowSpec.FURY)
-                .isMain(false)
-                .build());
+                .wowClass(WowClass.WARRIOR).wowSpec(WowSpec.FURY).isMain(false).build());
 
         // member2 - 사제 힐러
         characterRepository.save(UserCharacter.builder()
-                .user(member2)
+                .user(member2).server("아즈샤라")
                 .characterName("힐봇나인천")
-                .wowClass(WowClass.PRIEST)
-                .wowSpec(WowSpec.HOLY_PRIEST)
-                .isMain(true)
-                .build());
+                .wowClass(WowClass.PRIEST).wowSpec(WowSpec.HOLY_PRIEST).isMain(true).build());
 
         // member3 - 도적 딜러
         characterRepository.save(UserCharacter.builder()
-                .user(member3)
+                .user(member3).server("아즈샤라")
                 .characterName("그림자도적")
-                .wowClass(WowClass.ROGUE)
-                .wowSpec(WowSpec.SUBTLETY)
-                .isMain(true)
-                .build());
+                .wowClass(WowClass.ROGUE).wowSpec(WowSpec.SUBTLETY).isMain(true).build());
 
         // member4 - 마법사 딜러
         characterRepository.save(UserCharacter.builder()
-                .user(member4)
+                .user(member4).server("하이잘")
                 .characterName("서리마법사")
-                .wowClass(WowClass.MAGE)
-                .wowSpec(WowSpec.FROST_MAGE)
-                .isMain(true)
-                .build());
+                .wowClass(WowClass.MAGE).wowSpec(WowSpec.FROST_MAGE).isMain(true).build());
 
         // member5 - 드루이드 딜러
         characterRepository.save(UserCharacter.builder()
-                .user(member5)
+                .user(member5).server("줄진")
                 .characterName("달빛치킨")
-                .wowClass(WowClass.DRUID)
-                .wowSpec(WowSpec.BALANCE)
-                .isMain(true)
-                .build());
+                .wowClass(WowClass.DRUID).wowSpec(WowSpec.BALANCE).isMain(true).build());
 
         // ─── 꽉 찬 레이드용 추가 캐릭터 (탱2/힐4/딜14) ──────────
-        characterRepository.save(UserCharacter.builder().user(ironwall).characterName("아이언월").wowClass(WowClass.WARRIOR).wowSpec(WowSpec.PROTECTION_WARRIOR).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(tank3).characterName("공허수호").wowClass(WowClass.DEMON_HUNTER).wowSpec(WowSpec.VENGEANCE).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(ironwall).server("아즈샤라").characterName("아이언월").wowClass(WowClass.WARRIOR).wowSpec(WowSpec.PROTECTION_WARRIOR).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(tank3).server("아즈샤라").characterName("공허수호").wowClass(WowClass.DEMON_HUNTER).wowSpec(WowSpec.VENGEANCE).isMain(true).build());
 
-        characterRepository.save(UserCharacter.builder().user(heal2).characterName("성광치유").wowClass(WowClass.PALADIN).wowSpec(WowSpec.HOLY_PALADIN).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(heal3).characterName("안개직조").wowClass(WowClass.MONK).wowSpec(WowSpec.MISTWEAVER).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(heal4).characterName("자연치유").wowClass(WowClass.DRUID).wowSpec(WowSpec.RESTORATION_DRUID).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(heal5).characterName("빛의수호").wowClass(WowClass.PRIEST).wowSpec(WowSpec.DISCIPLINE).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal2).server("아즈샤라").characterName("성광치유").wowClass(WowClass.PALADIN).wowSpec(WowSpec.HOLY_PALADIN).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal3).server("하이잘").characterName("안개직조").wowClass(WowClass.MONK).wowSpec(WowSpec.MISTWEAVER).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal4).server("줄진").characterName("자연치유").wowClass(WowClass.DRUID).wowSpec(WowSpec.RESTORATION_DRUID).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(heal5).server("아즈샤라").characterName("빛의수호").wowClass(WowClass.PRIEST).wowSpec(WowSpec.DISCIPLINE).isMain(true).build());
 
-        characterRepository.save(UserCharacter.builder().user(dps1).characterName("파멸사냥꾼").wowClass(WowClass.DEMON_HUNTER).wowSpec(WowSpec.HAVOC).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps2).characterName("풍운격격").wowClass(WowClass.MONK).wowSpec(WowSpec.WINDWALKER).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps3).characterName("화염비").wowClass(WowClass.MAGE).wowSpec(WowSpec.FIRE).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps4).characterName("고통술사").wowClass(WowClass.WARLOCK).wowSpec(WowSpec.AFFLICTION).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps5).characterName("암흑사제").wowClass(WowClass.PRIEST).wowSpec(WowSpec.SHADOW).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps6).characterName("분노전사").wowClass(WowClass.WARRIOR).wowSpec(WowSpec.FURY).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps7).characterName("야수지배").wowClass(WowClass.HUNTER).wowSpec(WowSpec.BEAST_MASTERY).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps8).characterName("징벌성기").wowClass(WowClass.PALADIN).wowSpec(WowSpec.RETRIBUTION).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps9).characterName("원소폭풍").wowClass(WowClass.SHAMAN).wowSpec(WowSpec.ELEMENTAL).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps10).characterName("무법자").wowClass(WowClass.ROGUE).wowSpec(WowSpec.OUTLAW).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps11).characterName("부정기사").wowClass(WowClass.DEATH_KNIGHT).wowSpec(WowSpec.UNHOLY).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps12).characterName("황폐용기").wowClass(WowClass.EVOKER).wowSpec(WowSpec.DEVASTATION).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps13).characterName("사격수").wowClass(WowClass.HUNTER).wowSpec(WowSpec.MARKSMANSHIP).isMain(true).build());
-        characterRepository.save(UserCharacter.builder().user(dps14).characterName("증강용기").wowClass(WowClass.EVOKER).wowSpec(WowSpec.AUGMENTATION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps1).server("아즈샤라").characterName("파멸사냥꾼").wowClass(WowClass.DEMON_HUNTER).wowSpec(WowSpec.HAVOC).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps2).server("하이잘").characterName("풍운격격").wowClass(WowClass.MONK).wowSpec(WowSpec.WINDWALKER).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps3).server("아즈샤라").characterName("화염비").wowClass(WowClass.MAGE).wowSpec(WowSpec.FIRE).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps4).server("줄진").characterName("고통술사").wowClass(WowClass.WARLOCK).wowSpec(WowSpec.AFFLICTION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps5).server("아즈샤라").characterName("암흑사제").wowClass(WowClass.PRIEST).wowSpec(WowSpec.SHADOW).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps6).server("하이잘").characterName("분노전사").wowClass(WowClass.WARRIOR).wowSpec(WowSpec.FURY).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps7).server("아즈샤라").characterName("야수지배").wowClass(WowClass.HUNTER).wowSpec(WowSpec.BEAST_MASTERY).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps8).server("줄진").characterName("징벌성기").wowClass(WowClass.PALADIN).wowSpec(WowSpec.RETRIBUTION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps9).server("아즈샤라").characterName("원소폭풍").wowClass(WowClass.SHAMAN).wowSpec(WowSpec.ELEMENTAL).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps10).server("하이잘").characterName("무법자").wowClass(WowClass.ROGUE).wowSpec(WowSpec.OUTLAW).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps11).server("아즈샤라").characterName("부정기사").wowClass(WowClass.DEATH_KNIGHT).wowSpec(WowSpec.UNHOLY).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps12).server("줄진").characterName("황폐용기").wowClass(WowClass.EVOKER).wowSpec(WowSpec.DEVASTATION).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps13).server("아즈샤라").characterName("사격수").wowClass(WowClass.HUNTER).wowSpec(WowSpec.MARKSMANSHIP).isMain(true).build());
+        characterRepository.save(UserCharacter.builder().user(dps14).server("줄진").characterName("증강용기").wowClass(WowClass.EVOKER).wowSpec(WowSpec.AUGMENTATION).isMain(true).build());
 
         log.info("[DataInitializer] 캐릭터 생성 완료");
 

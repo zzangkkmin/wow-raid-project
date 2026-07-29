@@ -3,6 +3,7 @@ import type { WowClass, WowSpec } from '@/types/enums'
 
 export interface CharacterResponse {
   id: string
+  server: string
   characterName: string
   wowClass: WowClass
   wowSpec: WowSpec
@@ -10,6 +11,7 @@ export interface CharacterResponse {
 }
 
 export interface CharacterRequest {
+  server: string
   characterName: string
   wowClass: WowClass
   wowSpec: WowSpec

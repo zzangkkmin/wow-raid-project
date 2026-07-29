@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useState } from 'react'
 import { postApi } from '@/api/post.api'
 import { useAuthStore } from '@/stores/auth.store'
 import { UserRole } from '@/types/enums'
@@ -12,6 +13,8 @@ export default function PostDetailPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { user } = useAuthStore()
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   const { data: post, isLoading } = useQuery({
     queryKey: ['post', id],
@@ -25,6 +28,7 @@ export default function PostDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
       navigate(`/posts?boardType=${post?.boardType}`)
     },
+    onError: (err: Error) => { setConfirmDelete(false); setDeleteError(err.message) },
   })
 
   if (isLoading) return <LoadingSpinner />
@@ -60,26 +64,48 @@ export default function PostDetailPage() {
             </span>
           </div>
 
-          <div className="flex gap-2">
-            {canEdit && (
-              <Link
-                to={`/posts/${id}/edit`}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors"
-              >
-                <Edit className="w-3.5 h-3.5" />
-                수정
-              </Link>
+          <div className="flex flex-col items-end gap-1.5">
+            {confirmDelete ? (
+              <div className="flex items-center gap-2 bg-red-950/60 border border-red-800 rounded-lg px-3 py-1.5">
+                <span className="text-red-300 text-xs">정말 삭제하시겠습니까?</span>
+                <button
+                  onClick={() => deleteMutation.mutate()}
+                  disabled={deleteMutation.isPending}
+                  className="px-2.5 py-1 bg-red-700 hover:bg-red-600 disabled:opacity-50 text-white text-xs rounded-md transition-colors"
+                >
+                  {deleteMutation.isPending ? '삭제 중...' : '삭제'}
+                </button>
+                <button
+                  onClick={() => { setConfirmDelete(false); setDeleteError(null) }}
+                  className="px-2.5 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs rounded-md transition-colors"
+                >
+                  취소
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                {canEdit && (
+                  <Link
+                    to={`/posts/${id}/edit`}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-colors"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                    수정
+                  </Link>
+                )}
+                {canDelete && (
+                  <button
+                    onClick={() => { setDeleteError(null); setConfirmDelete(true) }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/50 hover:bg-red-900 border border-red-800 text-red-300 text-sm rounded-lg transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    삭제
+                  </button>
+                )}
+              </div>
             )}
-            {canDelete && (
-              <button
-                onClick={() => {
-                  if (confirm('게시글을 삭제하시겠습니까?')) deleteMutation.mutate()
-                }}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/50 hover:bg-red-900 border border-red-800 text-red-300 text-sm rounded-lg transition-colors"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-                삭제
-              </button>
+            {deleteError && (
+              <p className="text-red-400 text-xs">{deleteError}</p>
             )}
           </div>
         </div>

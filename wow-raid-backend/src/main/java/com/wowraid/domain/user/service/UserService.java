@@ -50,8 +50,12 @@ public class UserService {
     @Transactional
     public CharacterResponse addCharacter(String username, CharacterRequest request) {
         User user = findUser(username);
+        if (characterRepository.existsByUserIdAndServerAndCharacterName(user.getId(), request.server(), request.characterName())) {
+            throw new BusinessException(ErrorCode.DUPLICATE_CHARACTER);
+        }
         UserCharacter character = UserCharacter.builder()
                 .user(user)
+                .server(request.server())
                 .characterName(request.characterName())
                 .wowClass(request.wowClass())
                 .wowSpec(request.wowSpec())

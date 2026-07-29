@@ -179,6 +179,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
                     <div className="flex items-center gap-1.5">
                       {char.isMain && <Star className="w-3 h-3 text-yellow-400 fill-yellow-400 shrink-0" />}
                       <span className="text-white text-sm font-medium">{char.characterName}</span>
+                      <span className="text-[10px] text-gray-500 bg-gray-700 px-1 py-0.5 rounded shrink-0">{char.server}</span>
                     </div>
                     <span className="text-xs" style={{ color: WOW_CLASS_COLOR[char.wowClass] }}>
                       {WOW_CLASS_KR[char.wowClass]} · {WOW_SPEC_KR[char.wowSpec]}

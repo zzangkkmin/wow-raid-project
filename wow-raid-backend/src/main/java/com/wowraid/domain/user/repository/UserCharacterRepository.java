@@ -18,6 +18,9 @@ public interface UserCharacterRepository extends JpaRepository<UserCharacter, UU
     @Query("SELECT c FROM UserCharacter c WHERE c.id = :id AND c.deletedAt IS NULL")
     Optional<UserCharacter> findActiveById(@Param("id") UUID id);
 
+    @Query("SELECT COUNT(c) > 0 FROM UserCharacter c WHERE c.user.id = :userId AND c.server = :server AND c.characterName = :characterName AND c.deletedAt IS NULL")
+    boolean existsByUserIdAndServerAndCharacterName(@Param("userId") UUID userId, @Param("server") String server, @Param("characterName") String characterName);
+
     // 대표 캐릭터 설정 전 기존 대표 해제
     @Modifying
     @Query("UPDATE UserCharacter c SET c.isMain = false WHERE c.user.id = :userId AND c.deletedAt IS NULL")

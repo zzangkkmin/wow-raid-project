@@ -160,6 +160,14 @@ export const SPEC_DPS_TYPE: Partial<Record<WowSpec, 'MELEE' | 'RANGED'>> = {
   [WowSpec.DEVASTATION]: 'RANGED', [WowSpec.AUGMENTATION]: 'RANGED',
 }
 
+// WoW 한국 서버 목록 (월드 오브 워크래프트 기준, 클래식 제외)
+export const WOW_SERVERS = [
+  '가로나', '노르간논', '달라란', '데스윙', '듀로탄',
+  '렉사르', '말퓨리온', '불타는 군단', '세나리우스', '스톰레이지',
+  '아즈샤라', '알렉스트라자', '와일드해머', '윈드러너', '하이잘', '헬스크림',
+] as const
+export type WowServer = typeof WOW_SERVERS[number]
+
 // 직업별 소속 스펙 목록
 export const CLASS_SPECS: Record<WowClass, WowSpec[]> = {
   [WowClass.WARRIOR]: [WowSpec.ARMS, WowSpec.FURY, WowSpec.PROTECTION_WARRIOR],

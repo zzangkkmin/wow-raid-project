@@ -1,7 +1,7 @@
 import type { RaidStatsResponse, RoleStats } from '@/types/raid.types'
 import type { RegistrationResponse } from '@/types/registration.types'
 import { WowClass, RaidRole, RegistrationStatus } from '@/types/enums'
-import { WOW_CLASS_KR, WOW_CLASS_COLOR, WOW_SPEC_KR, RAID_ROLE_KR, REGISTRATION_STATUS_KR } from '@/utils/wowClass.util'
+import { WOW_CLASS_KR, WOW_CLASS_COLOR, WOW_SPEC_KR, RAID_ROLE_KR, REGISTRATION_STATUS_KR, SPEC_DPS_TYPE } from '@/utils/wowClass.util'
 import WowClassIcon from '@/components/common/WowClassIcon'
 import RaidRoleIcon from '@/components/common/RaidRoleIcon'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
@@ -139,14 +139,13 @@ function RoleCard({
   roleStats: RoleStats
   roleRegistrations: RegistrationResponse[]
 }) {
-  const presentClasses = Object.values(WowClass)
-    .map((cls) => ({ cls, count: roleStats.classCounts[cls] ?? 0 }))
-    .filter((s) => s.count > 0)
-    .sort((a, b) => b.count - a.count)
-
   const fillPct = roleStats.maxSlots > 0
     ? Math.min(100, Math.round((roleStats.confirmed / roleStats.maxSlots) * 100))
     : 0
+
+  const confirmedRegs = roleRegistrations.filter((r) => r.status === RegistrationStatus.CONFIRMED)
+  const meleeCount  = role === RaidRole.DPS ? confirmedRegs.filter((r) => SPEC_DPS_TYPE[r.wowSpec] === 'MELEE').length : 0
+  const rangedCount = role === RaidRole.DPS ? confirmedRegs.filter((r) => SPEC_DPS_TYPE[r.wowSpec] === 'RANGED').length : 0
 
   return (
     <div className={`bg-gray-900 border rounded-2xl p-5 flex flex-col gap-4 ${ROLE_BORDER[role]}`}>
@@ -155,7 +154,16 @@ function RoleCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <RaidRoleIcon role={role} size="md" />
-          <span className={`font-bold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
+          <div>
+            <span className={`font-bold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
+            {role === RaidRole.DPS && (
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-[11px] text-orange-400">근딜 {meleeCount}</span>
+                <span className="text-gray-600 text-[11px]">·</span>
+                <span className="text-[11px] text-sky-400">원딜 {rangedCount}</span>
+              </div>
+            )}
+          </div>
         </div>
         <span className="text-sm text-gray-400">
           <span className="text-white font-bold">{roleStats.confirmed}</span>

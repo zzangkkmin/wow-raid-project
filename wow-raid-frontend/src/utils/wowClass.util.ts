@@ -138,6 +138,28 @@ export const SPEC_ROLE: Record<WowSpec, RaidRole> = {
   [WowSpec.AUGMENTATION]: RaidRole.DPS,
 }
 
+// DPS 특성 → 근딜/원딜 분류 (탱/힐 특성은 포함 안 함)
+export const SPEC_DPS_TYPE: Partial<Record<WowSpec, 'MELEE' | 'RANGED'>> = {
+  // 근딜
+  [WowSpec.ARMS]: 'MELEE', [WowSpec.FURY]: 'MELEE',
+  [WowSpec.RETRIBUTION]: 'MELEE',
+  [WowSpec.SURVIVAL]: 'MELEE',
+  [WowSpec.ASSASSINATION]: 'MELEE', [WowSpec.OUTLAW]: 'MELEE', [WowSpec.SUBTLETY]: 'MELEE',
+  [WowSpec.FROST_DK]: 'MELEE', [WowSpec.UNHOLY]: 'MELEE',
+  [WowSpec.ENHANCEMENT]: 'MELEE',
+  [WowSpec.WINDWALKER]: 'MELEE',
+  [WowSpec.FERAL]: 'MELEE',
+  [WowSpec.HAVOC]: 'MELEE', [WowSpec.DEVOURER]: 'RANGED',  // 포식은 원딜
+  // 원딜
+  [WowSpec.BEAST_MASTERY]: 'RANGED', [WowSpec.MARKSMANSHIP]: 'RANGED',
+  [WowSpec.SHADOW]: 'RANGED',
+  [WowSpec.ELEMENTAL]: 'RANGED',
+  [WowSpec.ARCANE]: 'RANGED', [WowSpec.FIRE]: 'RANGED', [WowSpec.FROST_MAGE]: 'RANGED',
+  [WowSpec.AFFLICTION]: 'RANGED', [WowSpec.DEMONOLOGY]: 'RANGED', [WowSpec.DESTRUCTION]: 'RANGED',
+  [WowSpec.BALANCE]: 'RANGED',
+  [WowSpec.DEVASTATION]: 'RANGED', [WowSpec.AUGMENTATION]: 'RANGED',
+}
+
 // 직업별 소속 스펙 목록
 export const CLASS_SPECS: Record<WowClass, WowSpec[]> = {
   [WowClass.WARRIOR]: [WowSpec.ARMS, WowSpec.FURY, WowSpec.PROTECTION_WARRIOR],

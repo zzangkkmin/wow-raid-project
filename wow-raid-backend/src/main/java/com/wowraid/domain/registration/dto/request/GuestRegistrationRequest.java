@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 public record GuestRegistrationRequest(
         @NotBlank @Size(max = 50) String guestName,
         @NotBlank @Size(min = 4) String guestPassword,
+        @NotBlank @Size(max = 30) String server,
         @NotBlank String characterName,
         @NotNull WowClass wowClass,
         @NotNull WowSpec wowSpec,

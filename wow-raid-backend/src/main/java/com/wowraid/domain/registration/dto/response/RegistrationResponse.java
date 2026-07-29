@@ -14,6 +14,7 @@ public record RegistrationResponse(
         UUID id,
         String displayName,   // 회원: username, 비회원: guestName
         boolean isGuest,
+        String server,
         String characterName,
         WowClass wowClass,
         WowSpec wowSpec,
@@ -27,6 +28,7 @@ public record RegistrationResponse(
                 r.getId(),
                 r.getUser().getUsername(),
                 false,
+                r.getServer(),
                 r.getCharacterName(),
                 r.getWowClass(),
                 r.getWowSpec(),
@@ -42,6 +44,7 @@ public record RegistrationResponse(
                 g.getId(),
                 g.getGuestName(),
                 true,
+                g.getServer(),
                 g.getCharacterName(),
                 g.getWowClass(),
                 g.getWowSpec(),

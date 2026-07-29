@@ -33,6 +33,9 @@ public class GuestRegistration extends BaseEntity {
     @Column(name = "guest_password", nullable = false)
     private String guestPassword;
 
+    @Column(name = "server", nullable = false, length = 30)
+    private String server;
+
     @Column(name = "character_name", nullable = false, length = 50)
     private String characterName;
 
@@ -55,7 +58,8 @@ public class GuestRegistration extends BaseEntity {
     @Column(name = "absence_reason", columnDefinition = "TEXT")
     private String absenceReason;
 
-    public void update(String characterName, WowClass wowClass, WowSpec wowSpec, RaidRole role) {
+    public void update(String server, String characterName, WowClass wowClass, WowSpec wowSpec, RaidRole role) {
+        this.server = server;
         this.characterName = characterName;
         this.wowClass = wowClass;
         this.wowSpec = wowSpec;

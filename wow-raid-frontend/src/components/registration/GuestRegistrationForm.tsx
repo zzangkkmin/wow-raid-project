@@ -5,13 +5,14 @@ import { useEffect } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { guestRegistrationApi } from '@/api/registration.api'
 import { WowClass, WowSpec, RaidRole } from '@/types/enums'
-import { WOW_CLASS_KR, WOW_SPEC_KR, WOW_CLASS_COLOR, RAID_ROLE_KR, CLASS_SPECS, SPEC_ROLE } from '@/utils/wowClass.util'
+import { WOW_CLASS_KR, WOW_SPEC_KR, WOW_CLASS_COLOR, RAID_ROLE_KR, CLASS_SPECS, SPEC_ROLE, WOW_SERVERS } from '@/utils/wowClass.util'
 import WowClassIcon from '@/components/common/WowClassIcon'
 import RaidRoleIcon from '@/components/common/RaidRoleIcon'
 
 const schema = z.object({
   guestName:     z.string().min(1, '이름을 입력해주세요.').max(50),
   guestPassword: z.string().min(4, '비밀번호는 4자 이상이어야 합니다.'),
+  server:        z.string().min(1, '서버를 선택해주세요.'),
   characterName: z.string().min(1, '캐릭터명을 입력해주세요.'),
   wowClass:      z.nativeEnum(WowClass),
   wowSpec:       z.nativeEnum(WowSpec),
@@ -37,6 +38,7 @@ export default function GuestRegistrationForm({ raidId, onSuccess, onCancel }: P
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      server:   WOW_SERVERS[0],
       wowClass: WowClass.WARRIOR,
       wowSpec:  defaultSpec,
       role:     SPEC_ROLE[defaultSpec],
@@ -83,11 +85,22 @@ export default function GuestRegistrationForm({ raidId, onSuccess, onCancel }: P
         </div>
       </div>
 
-      {/* 캐릭터명 */}
-      <div>
-        <label className="block text-xs text-gray-400 mb-1">캐릭터명</label>
-        <input {...register('characterName')} placeholder="캐릭터명 입력" className={inputCls} />
-        {errors.characterName && <p className="text-red-400 text-xs mt-1">{errors.characterName.message}</p>}
+      {/* 서버 + 캐릭터명 */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">서버</label>
+          <select {...register('server')} className={inputCls}>
+            {WOW_SERVERS.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          {errors.server && <p className="text-red-400 text-xs mt-1">{errors.server.message}</p>}
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 mb-1">캐릭터명</label>
+          <input {...register('characterName')} placeholder="캐릭터명 입력" className={inputCls} />
+          {errors.characterName && <p className="text-red-400 text-xs mt-1">{errors.characterName.message}</p>}
+        </div>
       </div>
 
       {/* 직업 — 아이콘 그리드 */}

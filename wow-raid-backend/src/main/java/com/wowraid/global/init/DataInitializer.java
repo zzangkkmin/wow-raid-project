@@ -291,6 +291,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidNormal)
                 .user(leader)
+                .server("아즈샤라")
                 .characterName("팔라딘킹")
                 .wowClass(WowClass.PALADIN)
                 .wowSpec(WowSpec.PROTECTION_PALADIN)
@@ -302,6 +303,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidNormal)
                 .user(member1)
+                .server("아즈샤라")
                 .characterName("다크나이트")
                 .wowClass(WowClass.DEATH_KNIGHT)
                 .wowSpec(WowSpec.BLOOD)
@@ -313,6 +315,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidNormal)
                 .user(member2)
+                .server("하이잘")
                 .characterName("힐봇나인천")
                 .wowClass(WowClass.PRIEST)
                 .wowSpec(WowSpec.HOLY_PRIEST)
@@ -324,6 +327,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidNormal)
                 .user(member3)
+                .server("아즈샤라")
                 .characterName("그림자도적")
                 .wowClass(WowClass.ROGUE)
                 .wowSpec(WowSpec.SUBTLETY)
@@ -335,6 +339,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidNormal)
                 .user(member4)
+                .server("렉사르")
                 .characterName("서리마법사")
                 .wowClass(WowClass.MAGE)
                 .wowSpec(WowSpec.FROST_MAGE)
@@ -346,6 +351,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidNormal)
                 .user(member5)
+                .server("헬스크림")
                 .characterName("달빛치킨")
                 .wowClass(WowClass.DRUID)
                 .wowSpec(WowSpec.BALANCE)
@@ -357,6 +363,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidHeroic)
                 .user(leader)
+                .server("아즈샤라")
                 .characterName("팔라딘킹")
                 .wowClass(WowClass.PALADIN)
                 .wowSpec(WowSpec.PROTECTION_PALADIN)
@@ -367,6 +374,7 @@ public class DataInitializer implements ApplicationRunner {
         registrationRepository.save(Registration.builder()
                 .raidSchedule(openRaidHeroic)
                 .user(member3)
+                .server("아즈샤라")
                 .characterName("그림자도적")
                 .wowClass(WowClass.ROGUE)
                 .wowSpec(WowSpec.SUBTLETY)
@@ -391,49 +399,49 @@ public class DataInitializer implements ApplicationRunner {
 
         // 탱 2명
         for (Object[] entry : new Object[][]{
-                {ironwall, "아이언월", WowClass.WARRIOR, WowSpec.PROTECTION_WARRIOR, RaidRole.TANK},
-                {tank3,    "공허수호", WowClass.DEMON_HUNTER, WowSpec.VENGEANCE,          RaidRole.TANK},
+                {ironwall, "아즈샤라", "아이언월", WowClass.WARRIOR,      WowSpec.PROTECTION_WARRIOR, RaidRole.TANK},
+                {tank3,    "하이잘",   "공허수호", WowClass.DEMON_HUNTER, WowSpec.VENGEANCE,          RaidRole.TANK},
         }) {
             registrationRepository.save(Registration.builder()
                     .raidSchedule(fullRaid).user((User) entry[0])
-                    .characterName((String) entry[1]).wowClass((WowClass) entry[2])
-                    .wowSpec((WowSpec) entry[3]).role((RaidRole) entry[4])
+                    .server((String) entry[1]).characterName((String) entry[2])
+                    .wowClass((WowClass) entry[3]).wowSpec((WowSpec) entry[4]).role((RaidRole) entry[5])
                     .status(RegistrationStatus.CONFIRMED).build());
         }
         // 힐 4명
         for (Object[] entry : new Object[][]{
-                {heal2, "성광치유", WowClass.PALADIN, WowSpec.HOLY_PALADIN,        RaidRole.HEALER},
-                {heal3, "안개직조", WowClass.MONK,    WowSpec.MISTWEAVER,          RaidRole.HEALER},
-                {heal4, "자연치유", WowClass.DRUID,   WowSpec.RESTORATION_DRUID,   RaidRole.HEALER},
-                {heal5, "빛의수호", WowClass.PRIEST,  WowSpec.DISCIPLINE,          RaidRole.HEALER},
+                {heal2, "아즈샤라", "성광치유", WowClass.PALADIN, WowSpec.HOLY_PALADIN,      RaidRole.HEALER},
+                {heal3, "렉사르",   "안개직조", WowClass.MONK,    WowSpec.MISTWEAVER,        RaidRole.HEALER},
+                {heal4, "스톰레이지","자연치유", WowClass.DRUID,   WowSpec.RESTORATION_DRUID, RaidRole.HEALER},
+                {heal5, "세나리우스","빛의수호", WowClass.PRIEST,  WowSpec.DISCIPLINE,        RaidRole.HEALER},
         }) {
             registrationRepository.save(Registration.builder()
                     .raidSchedule(fullRaid).user((User) entry[0])
-                    .characterName((String) entry[1]).wowClass((WowClass) entry[2])
-                    .wowSpec((WowSpec) entry[3]).role((RaidRole) entry[4])
+                    .server((String) entry[1]).characterName((String) entry[2])
+                    .wowClass((WowClass) entry[3]).wowSpec((WowSpec) entry[4]).role((RaidRole) entry[5])
                     .status(RegistrationStatus.CONFIRMED).build());
         }
         // 딜 14명
         for (Object[] entry : new Object[][]{
-                {dps1,  "파멸사냥꾼", WowClass.DEMON_HUNTER, WowSpec.HAVOC,             RaidRole.DPS},
-                {dps2,  "풍운격격",   WowClass.MONK,         WowSpec.WINDWALKER,        RaidRole.DPS},
-                {dps3,  "화염비",     WowClass.MAGE,         WowSpec.FIRE,              RaidRole.DPS},
-                {dps4,  "고통술사",   WowClass.WARLOCK,      WowSpec.AFFLICTION,        RaidRole.DPS},
-                {dps5,  "암흑사제",   WowClass.PRIEST,       WowSpec.SHADOW,            RaidRole.DPS},
-                {dps6,  "분노전사",   WowClass.WARRIOR,      WowSpec.FURY,              RaidRole.DPS},
-                {dps7,  "야수지배",   WowClass.HUNTER,       WowSpec.BEAST_MASTERY,     RaidRole.DPS},
-                {dps8,  "징벌성기",   WowClass.PALADIN,      WowSpec.RETRIBUTION,       RaidRole.DPS},
-                {dps9,  "원소폭풍",   WowClass.SHAMAN,       WowSpec.ELEMENTAL,         RaidRole.DPS},
-                {dps10, "무법자",     WowClass.ROGUE,        WowSpec.OUTLAW,            RaidRole.DPS},
-                {dps11, "부정기사",   WowClass.DEATH_KNIGHT, WowSpec.UNHOLY,            RaidRole.DPS},
-                {dps12, "황폐용기",   WowClass.EVOKER,       WowSpec.DEVASTATION,       RaidRole.DPS},
-                {dps13, "사격수",     WowClass.HUNTER,       WowSpec.MARKSMANSHIP,      RaidRole.DPS},
-                {dps14, "증강용기",   WowClass.EVOKER,       WowSpec.AUGMENTATION,      RaidRole.DPS},
+                {dps1,  "아즈샤라",  "파멸사냥꾼", WowClass.DEMON_HUNTER, WowSpec.HAVOC,         RaidRole.DPS},
+                {dps2,  "하이잘",    "풍운격격",   WowClass.MONK,         WowSpec.WINDWALKER,    RaidRole.DPS},
+                {dps3,  "렉사르",    "화염비",     WowClass.MAGE,         WowSpec.FIRE,          RaidRole.DPS},
+                {dps4,  "와일드해머","고통술사",   WowClass.WARLOCK,      WowSpec.AFFLICTION,    RaidRole.DPS},
+                {dps5,  "헬스크림",  "암흑사제",   WowClass.PRIEST,       WowSpec.SHADOW,        RaidRole.DPS},
+                {dps6,  "아즈샤라",  "분노전사",   WowClass.WARRIOR,      WowSpec.FURY,          RaidRole.DPS},
+                {dps7,  "스톰레이지","야수지배",   WowClass.HUNTER,       WowSpec.BEAST_MASTERY, RaidRole.DPS},
+                {dps8,  "세나리우스","징벌성기",   WowClass.PALADIN,      WowSpec.RETRIBUTION,   RaidRole.DPS},
+                {dps9,  "하이잘",    "원소폭풍",   WowClass.SHAMAN,       WowSpec.ELEMENTAL,     RaidRole.DPS},
+                {dps10, "아즈샤라",  "무법자",     WowClass.ROGUE,        WowSpec.OUTLAW,        RaidRole.DPS},
+                {dps11, "렉사르",    "부정기사",   WowClass.DEATH_KNIGHT, WowSpec.UNHOLY,        RaidRole.DPS},
+                {dps12, "와일드해머","황폐용기",   WowClass.EVOKER,       WowSpec.DEVASTATION,   RaidRole.DPS},
+                {dps13, "스톰레이지","사격수",     WowClass.HUNTER,       WowSpec.MARKSMANSHIP,  RaidRole.DPS},
+                {dps14, "세나리우스","증강용기",   WowClass.EVOKER,       WowSpec.AUGMENTATION,  RaidRole.DPS},
         }) {
             registrationRepository.save(Registration.builder()
                     .raidSchedule(fullRaid).user((User) entry[0])
-                    .characterName((String) entry[1]).wowClass((WowClass) entry[2])
-                    .wowSpec((WowSpec) entry[3]).role((RaidRole) entry[4])
+                    .server((String) entry[1]).characterName((String) entry[2])
+                    .wowClass((WowClass) entry[3]).wowSpec((WowSpec) entry[4]).role((RaidRole) entry[5])
                     .status(RegistrationStatus.CONFIRMED).build());
         }
         log.info("[DataInitializer] 꽉 찬 레이드 데이터 생성 완료 (20명 CONFIRMED)");

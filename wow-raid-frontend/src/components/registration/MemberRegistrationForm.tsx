@@ -6,12 +6,13 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { registrationApi } from '@/api/registration.api'
 import { userApi } from '@/api/user.api'
 import { WowClass, WowSpec, RaidRole } from '@/types/enums'
-import { WOW_CLASS_KR, WOW_SPEC_KR, WOW_CLASS_COLOR, RAID_ROLE_KR, CLASS_SPECS, SPEC_ROLE } from '@/utils/wowClass.util'
+import { WOW_CLASS_KR, WOW_SPEC_KR, WOW_CLASS_COLOR, RAID_ROLE_KR, CLASS_SPECS, SPEC_ROLE, WOW_SERVERS } from '@/utils/wowClass.util'
 import WowClassIcon from '@/components/common/WowClassIcon'
 import RaidRoleIcon from '@/components/common/RaidRoleIcon'
 import { Star } from 'lucide-react'
 
 const schema = z.object({
+  server: z.string().min(1, '서버를 선택해주세요.'),
   characterName: z.string().min(1, '캐릭터명을 입력해주세요.'),
   wowClass: z.nativeEnum(WowClass),
   wowSpec: z.nativeEnum(WowSpec),
@@ -48,6 +49,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      server: WOW_SERVERS[0],
       wowClass: WowClass.WARRIOR,
       wowSpec: defaultSpec,
       role: SPEC_ROLE[defaultSpec],
@@ -64,6 +66,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
     if (characters.length > 0) {
       setMode('my')
       const main = characters.find((c) => c.isMain) ?? characters[0]
+      setValue('server', main.server)
       setValue('characterName', main.characterName)
       setValue('wowClass', main.wowClass)
       setValue('wowSpec', main.wowSpec)
@@ -94,6 +97,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
 
   const selectCharacter = (char: typeof characters[0]) => {
     selectingChar.current = true
+    setValue('server', char.server)
     setValue('characterName', char.characterName)
     setValue('wowClass', char.wowClass)
     setValue('wowSpec', char.wowSpec)
@@ -111,6 +115,7 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
       // 직접 입력: 이전에 입력한 값 복원, 없으면 빈 상태
       const saved = manualSnapshot.current
       selectingChar.current = true
+      setValue('server', saved?.server ?? WOW_SERVERS[0])
       setValue('characterName', saved?.characterName ?? '')
       setValue('wowClass', saved?.wowClass ?? WowClass.WARRIOR)
       setValue('wowSpec', saved?.wowSpec ?? defaultSpec)
@@ -120,8 +125,9 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
       // 내 캐릭터: 이전에 선택한 캐릭터 복원, 없으면 대표 캐릭터
       const saved = mySnapshot.current
       const main = characters.find((c) => c.isMain) ?? characters[0]
-      const restore = saved ?? { characterName: main.characterName, wowClass: main.wowClass, wowSpec: main.wowSpec, role: SPEC_ROLE[main.wowSpec] }
+      const restore = saved ?? { server: main.server, characterName: main.characterName, wowClass: main.wowClass, wowSpec: main.wowSpec, role: SPEC_ROLE[main.wowSpec] }
       selectingChar.current = true
+      setValue('server', restore.server)
       setValue('characterName', restore.characterName)
       setValue('wowClass', restore.wowClass)
       setValue('wowSpec', restore.wowSpec)
@@ -195,10 +201,21 @@ export default function MemberRegistrationForm({ raidId, onSuccess }: Props) {
       {/* 직접 입력 모드 */}
       {mode === 'manual' && (
         <>
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">캐릭터명</label>
-            <input {...register('characterName')} placeholder="캐릭터명 입력" className={inputCls} />
-            {errors.characterName && <p className="text-red-400 text-xs mt-1">{errors.characterName.message}</p>}
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">서버</label>
+              <select {...register('server')} className={inputCls}>
+                {WOW_SERVERS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              {errors.server && <p className="text-red-400 text-xs mt-1">{errors.server.message}</p>}
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">캐릭터명</label>
+              <input {...register('characterName')} placeholder="캐릭터명 입력" className={inputCls} />
+              {errors.characterName && <p className="text-red-400 text-xs mt-1">{errors.characterName.message}</p>}
+            </div>
           </div>
 
           <div>

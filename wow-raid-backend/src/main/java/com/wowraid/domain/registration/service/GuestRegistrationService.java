@@ -47,6 +47,7 @@ public class GuestRegistrationService {
                 .raidSchedule(raid)
                 .guestName(request.guestName())
                 .guestPassword(passwordEncoder.encode(request.guestPassword()))
+                .server(request.server())
                 .characterName(request.characterName())
                 .wowClass(request.wowClass())
                 .wowSpec(request.wowSpec())
@@ -67,7 +68,7 @@ public class GuestRegistrationService {
     public RegistrationResponse update(UUID raidId, UUID id, GuestAuthRequest request) {
         GuestRegistration guest = findAndAuth(id, request.guestName(), request.guestPassword());
         validateActive(guest);
-        guest.update(request.characterName(), request.wowClass(), request.wowSpec(), request.role());
+        guest.update(request.server(), request.characterName(), request.wowClass(), request.wowSpec(), request.role());
         return RegistrationResponse.fromGuest(guest);
     }
 

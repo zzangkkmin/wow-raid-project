@@ -48,6 +48,7 @@ public class RegistrationService {
         Registration registration = Registration.builder()
                 .raidSchedule(raid)
                 .user(user)
+                .server(request.server())
                 .characterName(request.characterName())
                 .wowClass(request.wowClass())
                 .wowSpec(request.wowSpec())
@@ -72,7 +73,7 @@ public class RegistrationService {
         User user = userService.findUser(username);
         Registration registration = findMyRegistration(raidId, user.getId());
         validateActive(registration);
-        registration.update(request.characterName(), request.wowClass(), request.wowSpec(), request.role());
+        registration.update(request.server(), request.characterName(), request.wowClass(), request.wowSpec(), request.role());
         return RegistrationResponse.from(registration);
     }
 

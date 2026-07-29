@@ -4,6 +4,7 @@ export interface RegistrationResponse {
   id: string
   displayName: string
   isGuest: boolean
+  server: string
   characterName: string
   wowClass: WowClass
   wowSpec: WowSpec
@@ -14,6 +15,7 @@ export interface RegistrationResponse {
 }
 
 export interface RegistrationRequest {
+  server: string
   characterName: string
   wowClass: WowClass
   wowSpec: WowSpec
@@ -23,6 +25,7 @@ export interface RegistrationRequest {
 export interface GuestRegistrationRequest {
   guestName: string
   guestPassword: string
+  server: string
   characterName: string
   wowClass: WowClass
   wowSpec: WowSpec

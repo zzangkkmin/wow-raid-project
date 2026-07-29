@@ -152,18 +152,17 @@ function RoleCard({
 
       {/* 헤더 */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <RaidRoleIcon role={role} size="md" />
-          <div>
-            <span className={`font-bold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
-            {role === RaidRole.DPS && (
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[11px] text-orange-400">근딜 {meleeCount}</span>
-                <span className="text-gray-600 text-[11px]">·</span>
-                <span className="text-[11px] text-sky-400">원딜 {rangedCount}</span>
-              </div>
-            )}
-          </div>
+          <span className={`font-bold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
+          {role === RaidRole.DPS && (
+            <>
+              <span className="text-gray-600 text-xs">·</span>
+              <span className="text-[11px] text-orange-400">근딜 {meleeCount}</span>
+              <span className="text-gray-600 text-[11px]">·</span>
+              <span className="text-[11px] text-sky-400">원딜 {rangedCount}</span>
+            </>
+          )}
         </div>
         <span className="text-sm text-gray-400">
           <span className="text-white font-bold">{roleStats.confirmed}</span>
@@ -186,7 +185,7 @@ function RoleCard({
       {roleRegistrations.length === 0 ? (
         <p className="text-xs text-gray-600 text-center py-1">신청자 없음</p>
       ) : (
-        <div className={`grid gap-1 ${role === RaidRole.DPS ? 'grid-cols-2' : 'grid-cols-1'}`}>
+        <div className={`grid gap-1 ${role === RaidRole.DPS ? 'grid-cols-3' : 'grid-cols-1'}`}>
           {roleRegistrations.map((r) => (
             <div
               key={r.id}
@@ -205,10 +204,15 @@ function RoleCard({
                   : r.status === RegistrationStatus.WAITING ? 'bg-yellow-400'
                   : 'bg-red-500'
                 }`} />
-                <span className="text-white text-xs font-medium truncate">
-                  {r.characterName}
-                  {r.isGuest && <span className="ml-0.5 text-gray-500 text-[9px]">비회</span>}
-                </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1">
+                    <span className="text-white text-xs font-medium truncate">{r.characterName}</span>
+                    {r.isGuest && <span className="text-gray-500 text-[9px] shrink-0">(비회원)</span>}
+                  </div>
+                  {r.server && (
+                    <span className="text-[10px] text-gray-500 leading-none truncate">{r.server}</span>
+                  )}
+                </div>
               </div>
               <span
                 className="text-[10px] font-semibold shrink-0 px-1.5 py-0.5 rounded"
@@ -241,7 +245,7 @@ export default function RaidStats({ stats, registrations }: Props) {
     <div className="space-y-4">
       <h2 className="text-lg font-bold text-white">공격대 구성</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_2fr_6fr] gap-4">
         {ROLE_ORDER.map((role) => (
           <RoleCard
             key={role}

@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 public record GuestAuthRequest(
         @NotBlank String guestName,
         @NotBlank String guestPassword,
+        String server,
         String characterName,
         WowClass wowClass,
         WowSpec wowSpec,

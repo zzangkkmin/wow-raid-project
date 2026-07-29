@@ -20,7 +20,7 @@ public class AdminController {
 
     @GetMapping("/users")
     public ApiResponse<?> getUsers(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
         return ApiResponse.ok(adminService.getUsers(pageable));
     }
 

@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '@/api/admin.api'
 import { UserRole } from '@/types/enums'
 import LoadingSpinner from '@/components/common/LoadingSpinner'
 import { formatDate } from '@/utils/date.util'
-import { Trash2 } from 'lucide-react'
+import { Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Page } from '@/types/common.types'
 
 interface UserItem {
@@ -23,11 +24,12 @@ const ROLE_LABEL: Record<UserRole, string> = {
 
 export default function AdminUserPage() {
   const queryClient = useQueryClient()
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+  const [page, setPage] = useState(0)
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-users', page] })
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin-users'],
-    queryFn: () => adminApi.getUsers() as unknown as Promise<Page<UserItem>>,
+    queryKey: ['admin-users', page],
+    queryFn: () => adminApi.getUsers(page) as unknown as Promise<Page<UserItem>>,
   })
 
   const roleMutation = useMutation({
@@ -48,7 +50,7 @@ export default function AdminUserPage() {
         <LoadingSpinner />
       ) : (
         <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm" style={{ tableLayout: 'fixed' }}>
             <thead className="bg-gray-800 text-gray-300">
               <tr>
                 <th className="text-left px-5 py-3.5">아이디</th>
@@ -99,6 +101,29 @@ export default function AdminUserPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* 페이지네이션 */}
+      {data && data.totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 mt-4">
+          <button
+            onClick={() => setPage((p) => p - 1)}
+            disabled={data.first}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-sm text-gray-400">
+            <span className="text-white font-medium">{data.number + 1}</span> / {data.totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => p + 1)}
+            disabled={data.last}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
       )}
     </div>

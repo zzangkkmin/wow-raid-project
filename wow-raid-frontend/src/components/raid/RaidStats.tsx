@@ -4,85 +4,96 @@ import { WowClass, RaidRole, RegistrationStatus } from '@/types/enums'
 import { WOW_CLASS_KR, WOW_CLASS_COLOR, WOW_SPEC_KR, RAID_ROLE_KR, REGISTRATION_STATUS_KR } from '@/utils/wowClass.util'
 import WowClassIcon from '@/components/common/WowClassIcon'
 import RaidRoleIcon from '@/components/common/RaidRoleIcon'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface Props {
   stats: RaidStatsResponse
   registrations: RegistrationResponse[]
 }
 
-// ── SVG 헬퍼 ────────────────────────────────────────────────────────────────
+// ── 직업 도넛 차트 (Recharts) ────────────────────────────────────────────────
 
-function polarToCartesian(cx: number, cy: number, r: number, deg: number) {
-  const rad = ((deg - 90) * Math.PI) / 180
-  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) }
+function CustomTooltip({ active, payload }: { active?: boolean; payload?: { payload: { name: string; count: number; color: string } }[] }) {
+  if (!active || !payload?.length) return null
+  const { name, count, color } = payload[0].payload
+  return (
+    <div className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-xs shadow-xl">
+      <span style={{ color }} className="font-semibold">{name}</span>
+      <span className="text-gray-300 ml-2">{count}명</span>
+    </div>
+  )
 }
 
-function arcPath(
-  cx: number, cy: number,
-  outerR: number, innerR: number,
-  startDeg: number, endDeg: number,
-): string {
-  const GAP = 2
-  const s = startDeg + GAP / 2
-  const e = endDeg - GAP / 2
-  if (e - s < 0.1) return ''
-  const o1 = polarToCartesian(cx, cy, outerR, s)
-  const o2 = polarToCartesian(cx, cy, outerR, e)
-  const i1 = polarToCartesian(cx, cy, innerR, s)
-  const i2 = polarToCartesian(cx, cy, innerR, e)
-  const large = e - s > 180 ? 1 : 0
-  return [
-    `M ${o1.x} ${o1.y}`,
-    `A ${outerR} ${outerR} 0 ${large} 1 ${o2.x} ${o2.y}`,
-    `L ${i2.x} ${i2.y}`,
-    `A ${innerR} ${innerR} 0 ${large} 0 ${i1.x} ${i1.y}`,
-    'Z',
-  ].join(' ')
+const RADIAN = Math.PI / 180
+
+function OuterLabel({ cx, cy, midAngle, outerRadius, name, count }: {
+  cx: number; cy: number; midAngle: number; outerRadius: number; name: string; count: number
+  [key: string]: unknown
+}) {
+  const radius = outerRadius + 28
+  const x = cx + radius * Math.cos(-midAngle * RADIAN)
+  const y = cy + radius * Math.sin(-midAngle * RADIAN)
+  const anchor = x > cx ? 'start' : 'end'
+  return (
+    <text x={x} y={y} textAnchor={anchor} fill="#9ca3af" fontSize={11}>
+      <tspan x={x} dy="0">{name}</tspan>
+      <tspan x={x} dy="14" fill="#6b7280">{count}명</tspan>
+    </text>
+  )
 }
 
-// ── 직업 도넛 차트 ───────────────────────────────────────────────────────────
 
 function ClassDonut({ roleStats }: { roleStats: RoleStats }) {
-  const cx = 60, cy = 60, outerR = 52, innerR = 32
-
-  const segments = Object.values(WowClass)
-    .map((cls) => ({ cls, count: roleStats.classCounts[cls] ?? 0, color: WOW_CLASS_COLOR[cls] }))
+  const data = Object.values(WowClass)
+    .map((cls) => ({ cls, name: WOW_CLASS_KR[cls], count: roleStats.classCounts[cls] ?? 0, color: WOW_CLASS_COLOR[cls] }))
     .filter((s) => s.count > 0)
 
-  const total = segments.reduce((sum, s) => sum + s.count, 0)
+  const total = data.reduce((sum, s) => sum + s.count, 0)
 
   if (total === 0) {
     return (
-      <svg viewBox="0 0 120 120" className="w-28 h-28">
-        <circle cx={cx} cy={cy} r={outerR} fill="#374151" opacity="0.3" />
-        <circle cx={cx} cy={cy} r={innerR} fill="#111827" />
-        <text x={cx} y={cy + 5} textAnchor="middle" fill="#4b5563" fontSize="11">없음</text>
-      </svg>
+      <div className="w-full h-64 flex items-center justify-center text-gray-600 text-xs">신청자 없음</div>
     )
   }
 
-  let cursor = 0
-  const slices = segments.map((seg) => {
-    const span = (seg.count / total) * 360
-    const sl = { ...seg, startDeg: cursor, endDeg: cursor + span }
-    cursor += span
-    return sl
-  })
+  const CenterLabel = ({ viewBox }: { viewBox?: { cx: number; cy: number } }) => {
+    const { cx = 0, cy = 0 } = viewBox ?? {}
+    return (
+      <>
+        <text x={cx} y={cy - 6} textAnchor="middle" fill="white" fontSize={20} fontWeight="bold">{total}</text>
+        <text x={cx} y={cy + 14} textAnchor="middle" fill="#6b7280" fontSize={11}>/ {roleStats.maxSlots}</text>
+      </>
+    )
+  }
 
   return (
-    <svg viewBox="0 0 120 120" className="w-28 h-28">
-      {slices.map((sl, i) => {
-        const d = arcPath(cx, cy, outerR, innerR, sl.startDeg, sl.endDeg)
-        return d ? <path key={i} d={d} fill={sl.color} /> : null
-      })}
-      <circle cx={cx} cy={cy} r={innerR - 1} fill="#111827" />
-      <text x={cx} y={cy - 4} textAnchor="middle" fill="white" fontSize="18" fontWeight="bold">
-        {total}
-      </text>
-      <text x={cx} y={cy + 11} textAnchor="middle" fill="#6b7280" fontSize="10">
-        / {roleStats.maxSlots}
-      </text>
-    </svg>
+    <div className="w-full h-64">
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart margin={{ top: 24, right: 48, bottom: 24, left: 48 }}>
+          <Pie
+            data={data}
+            dataKey="count"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            innerRadius="38%"
+            outerRadius="55%"
+            paddingAngle={2}
+            strokeWidth={0}
+            label={(props) => <OuterLabel {...props} />}
+            labelLine={{ stroke: '#4b5563', strokeWidth: 1 }}
+          >
+            {data.map((entry, i) => (
+              <Cell key={i} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip content={<CustomTooltip />} />
+          {/* 중앙 총원 표시 */}
+          <text x="50%" y="44%" textAnchor="middle" fill="white" fontSize={20} fontWeight="bold" dominantBaseline="middle">{total}</text>
+          <text x="50%" y="56%" textAnchor="middle" fill="#6b7280" fontSize={11} dominantBaseline="middle">/ {roleStats.maxSlots}</text>
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
   )
 }
 
@@ -167,57 +178,41 @@ function RoleCard({
       {roleRegistrations.length === 0 ? (
         <p className="text-xs text-gray-600 text-center py-1">신청자 없음</p>
       ) : (
-        <div className="space-y-1.5">
+        <div className={`grid gap-1 ${role === RaidRole.DPS ? 'grid-cols-2' : 'grid-cols-1'}`}>
           {roleRegistrations.map((r) => (
             <div
               key={r.id}
-              className={`flex items-center gap-2 px-3 py-2 bg-gray-800 rounded-lg ${
+              title={
+                r.status === RegistrationStatus.CONFIRMED ? '확정'
+                : r.status === RegistrationStatus.WAITING ? '대기 중'
+                : `불참${r.absenceReason ? `: ${r.absenceReason}` : ''}`
+              }
+              className={`flex items-center justify-between gap-1.5 px-2 py-1.5 bg-gray-800 rounded-md ${
                 r.status === RegistrationStatus.ABSENT ? 'opacity-40' : ''
               }`}
             >
-              <WowClassIcon wowClass={r.wowClass} size="sm" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-white text-xs font-medium truncate">{r.characterName}</span>
-                  {r.isGuest && (
-                    <span className="text-[10px] text-gray-500 bg-gray-700 px-1 rounded shrink-0">비회원</span>
-                  )}
-                </div>
-                <span className="text-[10px]" style={{ color: WOW_CLASS_COLOR[r.wowClass] }}>
-                  {WOW_CLASS_KR[r.wowClass]} · {WOW_SPEC_KR[r.wowSpec]}
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                  r.status === RegistrationStatus.CONFIRMED ? 'bg-green-400'
+                  : r.status === RegistrationStatus.WAITING ? 'bg-yellow-400'
+                  : 'bg-red-500'
+                }`} />
+                <span className="text-white text-xs font-medium truncate">
+                  {r.characterName}
+                  {r.isGuest && <span className="ml-0.5 text-gray-500 text-[9px]">비회</span>}
                 </span>
               </div>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full shrink-0 ${STATUS_STYLE[r.status]}`}>
-                {REGISTRATION_STATUS_KR[r.status]}
+              <span
+                className="text-[10px] font-semibold shrink-0 px-1.5 py-0.5 rounded"
+                style={{ color: WOW_CLASS_COLOR[r.wowClass], backgroundColor: `${WOW_CLASS_COLOR[r.wowClass]}22` }}
+              >
+                {WOW_SPEC_KR[r.wowSpec]}
               </span>
             </div>
           ))}
         </div>
       )}
 
-      {/* 구분선 */}
-      <div className="border-t border-gray-800" />
-
-      {/* 도넛 차트 + 범례 */}
-      <div className="flex items-center gap-4">
-        <ClassDonut roleStats={roleStats} />
-
-        {presentClasses.length > 0 ? (
-          <div className="flex-1 space-y-1.5">
-            {presentClasses.map(({ cls, count }) => (
-              <div key={cls} className="flex items-center gap-1.5">
-                <WowClassIcon wowClass={cls} size="sm" />
-                <span className="text-xs flex-1 truncate" style={{ color: WOW_CLASS_COLOR[cls] }}>
-                  {WOW_CLASS_KR[cls]}
-                </span>
-                <span className="text-xs text-white font-bold">{count}</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-gray-600 flex-1">직업 없음</p>
-        )}
-      </div>
     </div>
   )
 }
@@ -247,6 +242,22 @@ export default function RaidStats({ stats, registrations }: Props) {
             roleRegistrations={registrations.filter((r) => r.role === role)}
           />
         ))}
+      </div>
+
+      {/* 직업 분포 도넛 카드 */}
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5">
+        <p className="text-sm text-gray-400 font-medium mb-4">직업 분포</p>
+        <div className="grid grid-cols-3 gap-4">
+          {ROLE_ORDER.map((role) => {
+            const roleStats = getRoleStats(stats, role)
+            return (
+              <div key={role} className="flex flex-col items-center gap-2">
+                <span className={`text-xs font-semibold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
+                <ClassDonut roleStats={roleStats} />
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {overallMissing.length > 0 && (

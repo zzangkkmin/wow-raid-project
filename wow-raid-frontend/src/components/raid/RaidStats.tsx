@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { RaidStatsResponse, RoleStats } from '@/types/raid.types'
 import type { RegistrationResponse } from '@/types/registration.types'
-import { WowClass, RaidRole, RegistrationStatus } from '@/types/enums'
+import { WowClass, WowSpec, RaidRole, RegistrationStatus } from '@/types/enums'
 import { WOW_CLASS_KR, WOW_CLASS_COLOR, WOW_SPEC_KR, RAID_ROLE_KR, REGISTRATION_STATUS_KR, SPEC_DPS_TYPE } from '@/utils/wowClass.util'
 import WowClassIcon from '@/components/common/WowClassIcon'
 import RaidRoleIcon from '@/components/common/RaidRoleIcon'
@@ -315,9 +315,131 @@ function RoleCard({
   )
 }
 
+// ── 레이드 유틸 데이터 ────────────────────────────────────────────────────────────
+
+type UtilityKey = 'BATTLE_REZ' | 'BLOODLUST' | 'MOVEMENT' | 'RAID_CD'
+
+interface UtilEntry { key: UtilityKey; skill: string; note?: string }
+
+const UTILITY_META: Record<UtilityKey, { label: string; color: string; border: string; dot: string }> = {
+  BATTLE_REZ: { label: '전투부활', color: 'text-emerald-400', border: 'border-emerald-800/50', dot: 'bg-emerald-400' },
+  BLOODLUST:  { label: '블러드',   color: 'text-red-400',     border: 'border-red-800/50',     dot: 'bg-red-400'     },
+  MOVEMENT:   { label: '이동기',   color: 'text-sky-400',     border: 'border-sky-800/50',     dot: 'bg-sky-400'     },
+  RAID_CD:    { label: '공생기',   color: 'text-purple-400',  border: 'border-purple-800/50',  dot: 'bg-purple-400'  },
+}
+
+const UTIL_ORDER: UtilityKey[] = ['BATTLE_REZ', 'BLOODLUST', 'MOVEMENT', 'RAID_CD']
+
+const CLASS_UTILITIES: Partial<Record<WowClass, UtilEntry[]>> = {
+  [WowClass.DRUID]:        [{ key: 'BATTLE_REZ', skill: '환생' },              { key: 'MOVEMENT', skill: '쇄도의 포효' }],
+  [WowClass.DEATH_KNIGHT]: [{ key: 'BATTLE_REZ', skill: '아군 되살리기' },     { key: 'RAID_CD',  skill: '대마법 지대' }],
+  [WowClass.PALADIN]:      [{ key: 'BATTLE_REZ', skill: '중재' }],
+  [WowClass.WARLOCK]:      [{ key: 'BATTLE_REZ', skill: '영혼석' }, { key: 'MOVEMENT', skill: '악마 관문' }],
+  [WowClass.SHAMAN]:       [{ key: 'BLOODLUST',  skill: '블러드러스트/영웅심' }, { key: 'MOVEMENT', skill: '바람 질주 토템' }],
+  [WowClass.MAGE]:         [{ key: 'BLOODLUST',  skill: '시간 왜곡' }],
+  [WowClass.HUNTER]:       [{ key: 'BLOODLUST',  skill: '원초적 분노'}],
+  [WowClass.EVOKER]:       [{ key: 'BLOODLUST',  skill: '위상의 격노' },        { key: 'MOVEMENT', skill: '시간 소용돌이' }],
+  [WowClass.WARRIOR]:      [{ key: 'RAID_CD',    skill: '재집결의 함성' }],
+  [WowClass.DEMON_HUNTER]: [{ key: 'RAID_CD',    skill: '어둠' }],
+}
+
+const SPEC_UTILITIES: Partial<Record<WowSpec, UtilEntry[]>> = {
+  [WowSpec.HOLY_PALADIN]:          [{ key: 'RAID_CD', skill: '오라 숙련' }],
+  [WowSpec.DISCIPLINE]:            [{ key: 'RAID_CD', skill: '신의 권능: 방벽' }],
+  [WowSpec.HOLY_PRIEST]:           [{ key: 'RAID_CD', skill: '천상의 찬가' }, { key: 'RAID_CD', skill: '빛의 권능: 구원' }],
+  [WowSpec.SHADOW]:                [{ key: 'RAID_CD', skill: '흡혈의 선물' }],
+  [WowSpec.RESTORATION_SHAMAN]:    [{ key: 'RAID_CD', skill: '정신의 고리 토템' }, { key: 'RAID_CD', skill: '치유의 해일 토템' }],
+  [WowSpec.RESTORATION_DRUID]:     [{ key: 'RAID_CD', skill: '평온' }],
+  [WowSpec.MISTWEAVER]:            [{ key: 'RAID_CD', skill: '재활' }],
+  [WowSpec.PRESERVATION]:          [{ key: 'RAID_CD', skill: '되돌리기' }],
+}
+
+function getUtilities(reg: RegistrationResponse): UtilEntry[] {
+  return [
+    ...(CLASS_UTILITIES[reg.wowClass] ?? []),
+    ...(SPEC_UTILITIES[reg.wowSpec]   ?? []),
+  ]
+}
+
+// ── 레이드 유틸 탭 컴포넌트 ──────────────────────────────────────────────────────
+
+function RaidUtilTab({ registrations }: { registrations: RegistrationResponse[] }) {
+  const active = registrations.filter((r) => r.status !== RegistrationStatus.ABSENT)
+
+  type UtilChar = { reg: RegistrationResponse; skills: string[]; notes: string[] }
+  const utilMap = new Map<UtilityKey, UtilChar[]>()
+  UTIL_ORDER.forEach((k) => utilMap.set(k, []))
+
+  for (const reg of active) {
+    const byKey = new Map<UtilityKey, UtilEntry[]>()
+    for (const u of getUtilities(reg)) {
+      if (!byKey.has(u.key)) byKey.set(u.key, [])
+      byKey.get(u.key)!.push(u)
+    }
+    for (const [k, entries] of byKey) {
+      utilMap.get(k)?.push({
+        reg,
+        skills: entries.map((e) => e.skill),
+        notes:  entries.filter((e) => e.note).map((e) => e.note!),
+      })
+    }
+  }
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {UTIL_ORDER.map((key) => {
+        const meta  = UTILITY_META[key]
+        const chars = utilMap.get(key) ?? []
+        return (
+          <div key={key} className={`rounded-xl border ${meta.border} bg-gray-800/40 p-4`}>
+            {/* 유틸 헤더 */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`w-2 h-2 rounded-full shrink-0 ${meta.dot}`} />
+              <span className={`text-sm font-bold ${meta.color}`}>{meta.label}</span>
+              <span className="text-xs text-gray-600 ml-auto">{chars.length}명</span>
+            </div>
+
+            {chars.length === 0 ? (
+              <p className="text-xs text-gray-600 text-center py-3">보유 캐릭터 없음</p>
+            ) : (
+              <div className="space-y-1.5">
+                {chars.map(({ reg, skills, notes }) => (
+                  <div key={reg.id} className="flex items-center gap-2 px-2 py-1.5 bg-gray-800 rounded-lg">
+                    <WowClassIcon wowClass={reg.wowClass} size="sm" />
+                    <p className="text-xs truncate min-w-0">
+                      <span className="font-medium" style={{ color: WOW_CLASS_COLOR[reg.wowClass] }}>{reg.characterName}</span>
+                      <span className="text-gray-500 mx-1">-</span>
+                      <span className="text-gray-400">{skills.join(' · ')}</span>
+                      {notes.length > 0 && (
+                        <span className="text-yellow-600 ml-1">({notes.join(', ')})</span>
+                      )}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+// ── 통계 탭 패널 ────────────────────────────────────────────────────────────────
+
+const STAT_TABS = [
+  { key: 'class',   label: '직업 분포' },
+  { key: 'missing', label: '미보유 직업' },
+  { key: 'util',    label: '레이드 유틸' },
+] as const
+
+type StatTab = typeof STAT_TABS[number]['key']
+
 // ── 메인 컴포넌트 ────────────────────────────────────────────────────────────────
 
 export default function RaidStats({ raidId, isClosed, isOwner, stats, registrations }: Props) {
+  const [statTab, setStatTab] = useState<StatTab>('class')
+
   const allClasses = Object.values(WowClass)
 
   const overallMissing = allClasses.filter((cls) => {
@@ -345,40 +467,64 @@ export default function RaidStats({ raidId, isClosed, isOwner, stats, registrati
         ))}
       </div>
 
-      {/* 직업 분포 도넛 카드 */}
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5">
-        <p className="text-sm text-gray-400 font-medium mb-4">직업 분포</p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {ROLE_ORDER.map((role) => {
-            const roleStats = getRoleStats(stats, role)
-            return (
-              <div key={role} className="flex flex-col items-center gap-2">
-                <span className={`text-xs font-semibold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
-                <ClassDonut roleStats={roleStats} />
+      {/* 통계 카드 */}
+      <div className="bg-gray-900 border border-gray-700 rounded-2xl overflow-hidden">
+        {/* 탭 헤더 */}
+        <div className="flex items-center border-b border-gray-700 px-5 pt-4 gap-1">
+          <span className="text-sm font-bold text-white mr-4">통계</span>
+          {STAT_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setStatTab(tab.key)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-t-md transition-colors border-b-2 -mb-px ${
+                statTab === tab.key
+                  ? 'text-yellow-400 border-yellow-400'
+                  : 'text-gray-500 border-transparent hover:text-gray-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 탭 본문 */}
+        <div className="p-5">
+          {statTab === 'class' && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {ROLE_ORDER.map((role) => (
+                <div key={role} className="flex flex-col items-center gap-2">
+                  <span className={`text-xs font-semibold ${ROLE_TEXT[role]}`}>{RAID_ROLE_KR[role]}</span>
+                  <ClassDonut roleStats={getRoleStats(stats, role)} />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {statTab === 'missing' && (
+            overallMissing.length === 0 ? (
+              <p className="text-xs text-gray-600 text-center py-6">모든 직업이 참여 중입니다.</p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {overallMissing.map((cls) => (
+                  <div
+                    key={cls}
+                    className="flex items-center gap-1.5 px-2 py-1 bg-gray-800 rounded-lg border border-gray-700"
+                  >
+                    <WowClassIcon wowClass={cls} size="sm" />
+                    <span className="text-xs" style={{ color: WOW_CLASS_COLOR[cls] }}>
+                      {WOW_CLASS_KR[cls]}
+                    </span>
+                  </div>
+                ))}
               </div>
             )
-          })}
+          )}
+
+          {statTab === 'util' && (
+            <RaidUtilTab registrations={registrations} />
+          )}
         </div>
       </div>
-
-      {overallMissing.length > 0 && (
-        <div className="bg-gray-900 border border-gray-700 rounded-2xl p-4">
-          <p className="text-sm text-gray-400 font-medium mb-3">레이드 미보유 직업</p>
-          <div className="flex flex-wrap gap-2">
-            {overallMissing.map((cls) => (
-              <div
-                key={cls}
-                className="flex items-center gap-1.5 px-2 py-1 bg-gray-800 rounded-lg border border-gray-700"
-              >
-                <WowClassIcon wowClass={cls} size="sm" />
-                <span className="text-xs" style={{ color: WOW_CLASS_COLOR[cls] }}>
-                  {WOW_CLASS_KR[cls]}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -10,6 +10,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import { Settings } from 'lucide-react'
 import GuestActionModal from '@/components/registration/GuestActionModal'
 import { registrationApi, guestRegistrationApi } from '@/api/registration.api'
+import WclPopover from '@/components/raid/WclPopover'
 
 interface Props {
   raidId: string
@@ -301,6 +302,11 @@ function RoleCard({
                 >
                   {WOW_SPEC_KR[r.wowSpec]}
                 </span>
+                <WclPopover
+                  server={r.server}
+                  characterName={r.characterName}
+                  classColor={WOW_CLASS_COLOR[r.wowClass]}
+                />
                 {r.isGuest && !isClosed && (
                   <button
                     onClick={() => setGuestTarget(r)}

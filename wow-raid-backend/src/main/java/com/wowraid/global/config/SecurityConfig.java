@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/raids/*/guest-registrations/*").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/raids/*/guest-registrations/*/absence").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/wcl/**").permitAll()
                         // 관리자만
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // 나머지 인증 필요

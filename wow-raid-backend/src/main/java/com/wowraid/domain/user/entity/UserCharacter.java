@@ -44,4 +44,11 @@ public class UserCharacter extends BaseEntity {
     public void setMain(boolean isMain) {
         this.isMain = isMain;
     }
+
+    public void update(String server, String characterName, WowClass wowClass, WowSpec wowSpec) {
+        this.server = server;
+        this.characterName = characterName;
+        this.wowClass = wowClass;
+        this.wowSpec = wowSpec;
+    }
 }

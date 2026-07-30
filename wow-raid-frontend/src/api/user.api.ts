@@ -30,6 +30,9 @@ export const userApi = {
   addCharacter: (data: CharacterRequest) =>
     client.post<void, CharacterResponse>('/api/users/me/characters', data),
 
+  updateCharacter: (id: string, data: CharacterRequest) =>
+    client.put<void, CharacterResponse>(`/api/users/me/characters/${id}`, data),
+
   setMainCharacter: (id: string) =>
     client.patch<void, void>(`/api/users/me/characters/${id}/main`),
 

@@ -272,11 +272,12 @@ function RoleCard({
           {roleRegistrations.map((r) => (
             <div
               key={r.id}
-              title={
+              title={[
+                r.isGuest ? `${r.displayName} (비회원)` : r.displayName,
                 r.status === RegistrationStatus.CONFIRMED ? '확정'
                 : r.status === RegistrationStatus.WAITING ? '대기 중'
-                : `불참${r.absenceReason ? `: ${r.absenceReason}` : ''}`
-              }
+                : `불참${r.absenceReason ? `: ${r.absenceReason}` : ''}`,
+              ].join(' · ')}
               className={`flex items-center justify-between gap-1.5 px-2 py-1.5 bg-gray-800 rounded-md ${
                 r.status === RegistrationStatus.ABSENT ? 'opacity-40' : ''
               }`}

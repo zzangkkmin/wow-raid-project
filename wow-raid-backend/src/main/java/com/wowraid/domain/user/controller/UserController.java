@@ -47,6 +47,13 @@ public class UserController {
         return ApiResponse.ok(userService.addCharacter(user.getUsername(), request));
     }
 
+    @PutMapping("/me/characters/{id}")
+    public ApiResponse<CharacterResponse> updateCharacter(@AuthenticationPrincipal UserDetails user,
+                                                           @PathVariable UUID id,
+                                                           @Valid @RequestBody CharacterRequest request) {
+        return ApiResponse.ok(userService.updateCharacter(user.getUsername(), id, request));
+    }
+
     @PatchMapping("/me/characters/{id}/main")
     public ApiResponse<Void> setMain(@AuthenticationPrincipal UserDetails user,
                                       @PathVariable UUID id) {

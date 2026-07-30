@@ -65,6 +65,18 @@ public class UserService {
     }
 
     @Transactional
+    public CharacterResponse updateCharacter(String username, UUID characterId, CharacterRequest request) {
+        User user = findUser(username);
+        UserCharacter character = characterRepository.findActiveById(characterId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CHARACTER_NOT_FOUND));
+        if (!character.getUser().getId().equals(user.getId())) {
+            throw new BusinessException(ErrorCode.CHARACTER_ACCESS_DENIED);
+        }
+        character.update(request.server(), request.characterName(), request.wowClass(), request.wowSpec());
+        return CharacterResponse.from(character);
+    }
+
+    @Transactional
     public void setMainCharacter(String username, UUID characterId) {
         User user = findUser(username);
         UserCharacter character = characterRepository.findActiveById(characterId)

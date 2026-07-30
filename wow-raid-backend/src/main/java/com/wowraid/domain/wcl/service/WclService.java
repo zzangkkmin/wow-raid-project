@@ -78,7 +78,6 @@ public class WclService {
                 .bodyToMono(Map.class)
                 .block();
 
-        log.info("WCL raw response for [{}/{}]: {}", server, characterName, response);
         return parseResponse(response, characterName, server);
     }
 

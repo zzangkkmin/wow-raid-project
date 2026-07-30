@@ -59,10 +59,6 @@ export default function WclPopover({ server, characterName, classColor }: Props)
     retry: 1,
   })
 
-  // 디버그 로그
-  if (data) console.log('[WCL] data:', data)
-  if (error) console.error('[WCL] error:', error)
-
   const serverSlug = SERVER_SLUG[server] ?? server.toLowerCase()
   const wclUrl = `https://www.warcraftlogs.com/character/kr/${serverSlug}/${characterName}`
 

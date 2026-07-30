@@ -75,7 +75,7 @@ export default function RaidDetailPage() {
       {/* 레이드 헤더 */}
       <div className="bg-gray-900 border border-gray-700 rounded-2xl p-7 mb-6">
         {/* 상단: 제목/메타 + 버튼 */}
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <span className={`text-sm font-bold ${DIFFICULTY_COLOR[raid.difficulty]}`}>
@@ -101,8 +101,8 @@ export default function RaidDetailPage() {
             </div>
           </div>
 
-          {/* 오른쪽 액션 버튼 영역 */}
-          <div className="flex flex-col items-end gap-2 shrink-0">
+          {/* 액션 버튼 영역 — 모바일: 제목 아래 왼쪽 정렬 / 데스크탑: 오른쪽 정렬 */}
+          <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
             {/* 오너 관리 버튼 */}
             {isOwner && (
               <div className="flex flex-col items-end gap-1">

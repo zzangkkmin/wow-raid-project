@@ -33,25 +33,6 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: { payl
   )
 }
 
-const RADIAN = Math.PI / 180
-
-function OuterLabel({ cx, cy, midAngle, outerRadius, name, count }: {
-  cx: number; cy: number; midAngle: number; outerRadius: number; name: string; count: number
-  [key: string]: unknown
-}) {
-  const radius = outerRadius + 28
-  const x = cx + radius * Math.cos(-midAngle * RADIAN)
-  const y = cy + radius * Math.sin(-midAngle * RADIAN)
-  const anchor = x > cx ? 'start' : 'end'
-  return (
-    <text x={x} y={y} textAnchor={anchor} fill="#9ca3af" fontSize={11}>
-      <tspan x={x} dy="0">{name}</tspan>
-      <tspan x={x} dy="14" fill="#6b7280">{count}명</tspan>
-    </text>
-  )
-}
-
-
 function ClassDonut({ roleStats }: { roleStats: RoleStats }) {
   const data = Object.values(WowClass)
     .map((cls) => ({ cls, name: WOW_CLASS_KR[cls], count: roleStats.classCounts[cls] ?? 0, color: WOW_CLASS_COLOR[cls] }))
@@ -61,47 +42,47 @@ function ClassDonut({ roleStats }: { roleStats: RoleStats }) {
 
   if (total === 0) {
     return (
-      <div className="w-full h-64 flex items-center justify-center text-gray-600 text-xs">신청자 없음</div>
-    )
-  }
-
-  const CenterLabel = ({ viewBox }: { viewBox?: { cx: number; cy: number } }) => {
-    const { cx = 0, cy = 0 } = viewBox ?? {}
-    return (
-      <>
-        <text x={cx} y={cy - 6} textAnchor="middle" fill="white" fontSize={20} fontWeight="bold">{total}</text>
-        <text x={cx} y={cy + 14} textAnchor="middle" fill="#6b7280" fontSize={11}>/ {roleStats.maxSlots}</text>
-      </>
+      <div className="w-full flex items-center justify-center text-gray-600 text-xs py-8">신청자 없음</div>
     )
   }
 
   return (
-    <div className="w-full h-64">
-      <ResponsiveContainer width="100%" height="100%">
-        <PieChart margin={{ top: 24, right: 48, bottom: 24, left: 48 }}>
-          <Pie
-            data={data}
-            dataKey="count"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            innerRadius="38%"
-            outerRadius="55%"
-            paddingAngle={2}
-            strokeWidth={0}
-            label={(props) => <OuterLabel {...props} />}
-            labelLine={{ stroke: '#4b5563', strokeWidth: 1 }}
-          >
-            {data.map((entry, i) => (
-              <Cell key={i} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          {/* 중앙 총원 표시 */}
-          <text x="50%" y="44%" textAnchor="middle" fill="white" fontSize={20} fontWeight="bold" dominantBaseline="middle">{total}</text>
-          <text x="50%" y="56%" textAnchor="middle" fill="#6b7280" fontSize={11} dominantBaseline="middle">/ {roleStats.maxSlots}</text>
-        </PieChart>
-      </ResponsiveContainer>
+    <div className="w-full flex flex-col gap-3">
+      {/* 도넛 차트 */}
+      <div className="w-full h-36">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="count"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius="45%"
+              outerRadius="70%"
+              paddingAngle={2}
+              strokeWidth={0}
+            >
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+            <text x="50%" y="46%" textAnchor="middle" fill="white" fontSize={18} fontWeight="bold" dominantBaseline="middle">{total}</text>
+            <text x="50%" y="60%" textAnchor="middle" fill="#6b7280" fontSize={10} dominantBaseline="middle">/ {roleStats.maxSlots}</text>
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      {/* 범례 */}
+      <div className="flex flex-wrap gap-x-2 gap-y-1 justify-center">
+        {data.map((entry) => (
+          <div key={entry.cls} className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-sm shrink-0" style={{ backgroundColor: entry.color }} />
+            <span className="text-[10px] text-gray-400">{entry.name}</span>
+            <span className="text-[10px] font-semibold" style={{ color: entry.color }}>{entry.count}</span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -367,7 +348,7 @@ export default function RaidStats({ raidId, isClosed, isOwner, stats, registrati
       {/* 직업 분포 도넛 카드 */}
       <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5">
         <p className="text-sm text-gray-400 font-medium mb-4">직업 분포</p>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {ROLE_ORDER.map((role) => {
             const roleStats = getRoleStats(stats, role)
             return (

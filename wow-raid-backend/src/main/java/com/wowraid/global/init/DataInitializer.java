@@ -284,7 +284,21 @@ public class DataInitializer implements ApplicationRunner {
                 .createdBy(leader)
                 .build());
 
-        log.info("[DataInitializer] 레이드 일정 3개 생성 완료");
+        // 4) 모집 중 - 공허첨탑 신화 (3주 후 토요일) - 디스코드 링크 포함
+        raidRepository.save(RaidSchedule.builder()
+                .title("[신화] 공허첨탑 신화 도전 — 디스코드 필참")
+                .raidDate(LocalDateTime.now().plusDays(21).withHour(20).withMinute(0).withSecond(0))
+                .difficulty(Difficulty.MYTHIC)
+                .maxTanks(2)
+                .maxHealers(4)
+                .maxDps(14)
+                .notes("신화 경험자 우대 / 영웅 전 보스 클리어 필수\n파싱 기준: 딜러 75파센타일 이상 / 힐러 70파센타일 이상\n공략 디스코드에서 사전 숙지 후 참가 바랍니다.")
+                .discordUrl("https://discord.gg/UdFwCf9kb")
+                .status(RaidStatus.OPEN)
+                .createdBy(leader)
+                .build());
+
+        log.info("[DataInitializer] 레이드 일정 4개 생성 완료");
 
         // ─── 신청 데이터 (노말 레이드) ────────────────────────────
         // 공격대장(팔라딘) 탱 신청 - CONFIRMED

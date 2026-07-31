@@ -74,6 +74,7 @@ public class RaidService {
                 .maxHealers(request.maxHealers())
                 .maxDps(request.maxDps())
                 .notes(request.notes())
+                .discordUrl(request.discordUrl())
                 .createdBy(user)
                 .build();
         return RaidListResponse.from(raidRepository.save(raid));
@@ -84,7 +85,7 @@ public class RaidService {
         RaidSchedule raid = findRaid(id);
         validateOwner(raid, username);
         raid.update(request.title(), request.raidDate(), request.difficulty(),
-                request.maxTanks(), request.maxHealers(), request.maxDps(), request.notes());
+                request.maxTanks(), request.maxHealers(), request.maxDps(), request.notes(), request.discordUrl());
         return RaidListResponse.from(raid);
     }
 

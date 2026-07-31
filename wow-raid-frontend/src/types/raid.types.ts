@@ -12,6 +12,7 @@ export interface RaidListResponse {
   confirmedTanks: number
   confirmedHealers: number
   confirmedDps: number
+  discordUrl: string | null
   status: RaidStatus
   createdBy: string
   createdAt: string
@@ -45,6 +46,7 @@ export interface RaidRequest {
   maxHealers: number
   maxDps: number
   notes?: string
+  discordUrl?: string
 }
 
 export interface RaidListParams {

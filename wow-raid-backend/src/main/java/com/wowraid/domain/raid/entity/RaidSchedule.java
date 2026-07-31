@@ -44,6 +44,9 @@ public class RaidSchedule extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "discord_url", length = 500)
+    private String discordUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
     @Builder.Default
@@ -54,7 +57,7 @@ public class RaidSchedule extends BaseEntity {
     private User createdBy;
 
     public void update(String title, LocalDateTime raidDate, Difficulty difficulty,
-                       int maxTanks, int maxHealers, int maxDps, String notes) {
+                       int maxTanks, int maxHealers, int maxDps, String notes, String discordUrl) {
         this.title = title;
         this.raidDate = raidDate;
         this.difficulty = difficulty;
@@ -62,6 +65,7 @@ public class RaidSchedule extends BaseEntity {
         this.maxHealers = maxHealers;
         this.maxDps = maxDps;
         this.notes = notes;
+        this.discordUrl = discordUrl;
     }
 
     public void close() {

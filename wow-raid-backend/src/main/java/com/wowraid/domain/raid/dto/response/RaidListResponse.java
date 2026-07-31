@@ -18,6 +18,7 @@ public record RaidListResponse(
         int confirmedTanks,
         int confirmedHealers,
         int confirmedDps,
+        String discordUrl,
         RaidStatus status,
         String createdBy,
         LocalDateTime createdAt
@@ -35,6 +36,7 @@ public record RaidListResponse(
                 confirmedTanks,
                 confirmedHealers,
                 confirmedDps,
+                raid.getDiscordUrl(),
                 raid.getStatus(),
                 raid.getCreatedBy().getUsername(),
                 raid.getCreatedAt()

@@ -13,7 +13,8 @@ import { Star } from 'lucide-react'
 
 const schema = z.object({
   server: z.string().min(1, '서버를 선택해주세요.'),
-  characterName: z.string().min(1, '캐릭터명을 입력해주세요.'),
+  characterName: z.string()
+    .regex(/^([가-힣]{2,8}|[a-zA-Z]{3,12})$/, '한글 2~8자 또는 영문 3~12자만 가능합니다. (특수문자·숫자 불가)'),
   wowClass: z.nativeEnum(WowClass),
   wowSpec: z.nativeEnum(WowSpec),
   role: z.nativeEnum(RaidRole),

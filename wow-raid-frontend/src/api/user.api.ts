@@ -1,5 +1,5 @@
 import client from './client'
-import type { WowClass, WowSpec } from '@/types/enums'
+import type { WowClass, WowSpec, RaidRole, RegistrationStatus, Difficulty, RaidStatus } from '@/types/enums'
 
 export interface CharacterResponse {
   id: string
@@ -15,6 +15,23 @@ export interface CharacterRequest {
   characterName: string
   wowClass: WowClass
   wowSpec: WowSpec
+}
+
+export interface MyRegistrationResponse {
+  registrationId: string
+  status: RegistrationStatus
+  role: RaidRole
+  server: string
+  characterName: string
+  wowClass: WowClass
+  wowSpec: WowSpec
+  absenceReason: string | null
+  createdAt: string
+  raidId: string
+  raidTitle: string
+  raidDate: string
+  difficulty: Difficulty
+  raidStatus: RaidStatus
 }
 
 export const userApi = {
@@ -38,4 +55,7 @@ export const userApi = {
 
   deleteCharacter: (id: string) =>
     client.delete<void, void>(`/api/users/me/characters/${id}`),
+
+  getMyRegistrations: () =>
+    client.get<void, MyRegistrationResponse[]>('/api/users/me/registrations'),
 }

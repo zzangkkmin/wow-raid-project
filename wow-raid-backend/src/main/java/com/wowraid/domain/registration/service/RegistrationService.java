@@ -7,6 +7,7 @@ import com.wowraid.domain.raid.service.RaidService;
 import com.wowraid.domain.registration.dto.request.AbsenceRequest;
 import com.wowraid.domain.registration.dto.request.RegistrationRequest;
 import com.wowraid.domain.registration.dto.request.RegistrationStatusRequest;
+import com.wowraid.domain.registration.dto.response.MyRegistrationResponse;
 import com.wowraid.domain.registration.dto.response.RegistrationResponse;
 import com.wowraid.domain.registration.entity.Registration;
 import com.wowraid.domain.registration.enums.RaidRole;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -118,6 +120,15 @@ public class RegistrationService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.REGISTRATION_NOT_FOUND));
         registration.changeStatus(request.status());
         return RegistrationResponse.from(registration);
+    }
+
+    @Transactional(readOnly = true)
+    public List<MyRegistrationResponse> getMyRegistrations(String username) {
+        User user = userService.findUser(username);
+        return registrationRepository.findAllByUserId(user.getId())
+                .stream()
+                .map(MyRegistrationResponse::from)
+                .toList();
     }
 
     // ── private helpers ──────────────────────────────────────────────────────

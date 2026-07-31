@@ -1,5 +1,7 @@
 package com.wowraid.domain.user.controller;
 
+import com.wowraid.domain.registration.dto.response.MyRegistrationResponse;
+import com.wowraid.domain.registration.service.RegistrationService;
 import com.wowraid.domain.user.dto.request.ChangePasswordRequest;
 import com.wowraid.domain.user.dto.request.CharacterRequest;
 import com.wowraid.domain.user.dto.response.CharacterResponse;
@@ -21,12 +23,18 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final RegistrationService registrationService;
 
     @PatchMapping("/me/password")
     public ApiResponse<Void> changePassword(@AuthenticationPrincipal UserDetails user,
                                              @Valid @RequestBody ChangePasswordRequest request) {
         userService.changePassword(user.getUsername(), request);
         return ApiResponse.ok("비밀번호가 변경되었습니다.");
+    }
+
+    @GetMapping("/me/registrations")
+    public ApiResponse<List<MyRegistrationResponse>> getMyRegistrations(@AuthenticationPrincipal UserDetails user) {
+        return ApiResponse.ok(registrationService.getMyRegistrations(user.getUsername()));
     }
 
     @DeleteMapping("/me")

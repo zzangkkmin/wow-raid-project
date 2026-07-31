@@ -33,4 +33,8 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     // 역할별 직업 통계
     @Query("SELECT r.wowClass, COUNT(r) FROM Registration r WHERE r.raidSchedule.id = :raidId AND r.role = :role AND r.status IN :statuses AND r.deletedAt IS NULL GROUP BY r.wowClass")
     List<Object[]> countByWowClassAndRole(@Param("raidId") UUID raidId, @Param("role") RaidRole role, @Param("statuses") List<RegistrationStatus> statuses);
+
+    // 내 신청 목록 (레이드 날짜 내림차순)
+    @Query("SELECT r FROM Registration r JOIN FETCH r.raidSchedule WHERE r.user.id = :userId AND r.deletedAt IS NULL ORDER BY r.raidSchedule.raidDate DESC")
+    List<Registration> findAllByUserId(@Param("userId") UUID userId);
 }

@@ -8,15 +8,27 @@ import { Sword } from 'lucide-react'
 import { useState } from 'react'
 
 const schema = z.object({
-  username: z.string().min(3, '아이디는 3자 이상이어야 합니다.').max(20, '아이디는 20자 이하이어야 합니다.'),
+  username: z.string()
+    .min(4, '아이디는 4자 이상이어야 합니다.')
+    .max(20, '아이디는 20자 이하이어야 합니다.')
+    .regex(/^[A-Za-z0-9]+$/, '아이디는 영문 대소문자와 숫자만 사용할 수 있습니다.'),
   email: z.string().email('올바른 이메일 형식이 아닙니다.'),
-  password: z.string().min(8, '비밀번호는 8자 이상이어야 합니다.'),
+  password: z.string()
+    .min(8, '비밀번호는 8자 이상이어야 합니다.')
+    .regex(/[a-z]/, '비밀번호에 영문 소문자를 포함해야 합니다.')
+    .regex(/[A-Z]/, '비밀번호에 영문 대문자를 포함해야 합니다.')
+    .regex(/[0-9]/, '비밀번호에 숫자를 포함해야 합니다.')
+    .regex(/[^A-Za-z0-9\s]/, '비밀번호에 특수문자를 포함해야 합니다.')
+    .regex(/^\S+$/, '비밀번호에는 공백을 사용할 수 없습니다.'),
   passwordConfirm: z.string(),
   battletag: z.string().optional(),
   raidLeaderCode: z.string().optional(),
 }).refine((d) => d.password === d.passwordConfirm, {
   message: '비밀번호가 일치하지 않습니다.',
   path: ['passwordConfirm'],
+}).refine((d) => d.password !== d.username, {
+  message: '비밀번호는 아이디와 동일할 수 없습니다.',
+  path: ['password'],
 })
 
 type FormData = z.infer<typeof schema>
@@ -59,7 +71,7 @@ export default function RegisterPage() {
             <label className="block text-sm text-gray-300 mb-1">아이디 <span className="text-red-400">*</span></label>
             <input
               {...register('username')}
-              placeholder="3~20자"
+              placeholder="영문 대소문자·숫자 4~20자"
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition-colors"
             />
             {errors.username && <p className="text-red-400 text-xs mt-1">{errors.username.message}</p>}
@@ -83,7 +95,7 @@ export default function RegisterPage() {
             <input
               {...register('password')}
               type="password"
-              placeholder="8자 이상"
+              placeholder="대문자·소문자·숫자·특수문자 포함 8자 이상"
               className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500 transition-colors"
             />
             {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>}

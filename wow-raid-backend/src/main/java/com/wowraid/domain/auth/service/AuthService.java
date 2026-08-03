@@ -34,6 +34,9 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterRequest request) {
+        if (request.username().equals(request.password())) {
+            throw new BusinessException(ErrorCode.PASSWORD_SAME_AS_USERNAME);
+        }
         if (userRepository.existsByUsername(request.username())) {
             throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
